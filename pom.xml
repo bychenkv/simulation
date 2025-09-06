@@ -26,7 +26,7 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                    <mainClass>com.bychenkv.simulation.Simulation</mainClass>
+                    <mainClass>com.bychenkv.simulation.Startup</mainClass>
                 </configuration>
             </plugin>
         </plugins>
