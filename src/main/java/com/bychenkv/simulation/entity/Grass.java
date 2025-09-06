@@ -1,8 +1,8 @@
 package com.bychenkv.simulation.entity;
 
-public class Rock extends Entity {
+public class Grass extends Entity {
     @Override
     public String toString() {
-        return "\uD83E\uDEA8";
+        return "\uD83C\uDF31";
     }
 }
