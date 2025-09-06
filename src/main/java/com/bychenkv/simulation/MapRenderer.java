@@ -1,5 +1,7 @@
 package com.bychenkv.simulation;
 
+import com.bychenkv.simulation.entity.Entity;
+
 public class MapRenderer {
     private final Map map;
 

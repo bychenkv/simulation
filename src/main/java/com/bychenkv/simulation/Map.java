@@ -1,5 +1,7 @@
 package com.bychenkv.simulation;
 
+import com.bychenkv.simulation.entity.Entity;
+
 import java.util.HashMap;
 
 public class Map {
@@ -27,5 +29,9 @@ public class Map {
 
     public java.util.Map<Coordinate, Entity> getEntities() {
         return new HashMap<>(entities);
+    }
+
+    public void addEntity(int x, int y, Entity entity) {
+        entities.put(new Coordinate(x, y), entity);
     }
 }
