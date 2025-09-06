@@ -11,4 +11,9 @@ public class Herbivore extends Creature {
     public void makeMove(Map map) {
         // run finding grass algorithm
     }
+
+    @Override
+    public String toString() {
+        return "\uD83D\uDC04";
+    }
 }

@@ -14,4 +14,9 @@ public class Predator extends Creature {
     public void makeMove(Map map) {
         // run finding herbivore algorithm
     }
+
+    @Override
+    public String toString() {
+        return "\uD83E\uDD81";
+    }
 }
