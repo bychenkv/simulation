@@ -1,5 +1,6 @@
 package com.bychenkv.simulation.action;
 
+import com.bychenkv.simulation.Coordinate;
 import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.Map;
 
@@ -18,13 +19,15 @@ public abstract class ArrangeEntitiesAction extends Action {
     @Override
     public void execute() {
         for (int i = 0; i < entitiesNumber; i++) {
-            int x, y;
+            Coordinate coordinate;
             do {
-                x = random.nextInt(map.getRows());
-                y = random.nextInt(map.getColumns());
-            } while (map.getEntity(x, y) != null);
+                coordinate = new Coordinate(
+                        random.nextInt(map.getRows()),
+                        random.nextInt(map.getColumns())
+                );
+            } while (map.getEntity(coordinate) != null);
 
-            map.addEntity(x, y, createEntity());
+            map.addEntity(coordinate, createEntity());
         }
     }
 
