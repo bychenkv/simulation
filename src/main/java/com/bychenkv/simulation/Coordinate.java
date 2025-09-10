@@ -1,42 +1,25 @@
 package com.bychenkv.simulation;
 
-import java.util.Objects;
+import java.util.List;
 
-public class Coordinate {
-    private int x;
-    private int y;
-
-    public Coordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
+public record Coordinate(int x, int y) {
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Coordinate that)) {
+        if (!(o instanceof Coordinate(int thatX, int thatY))) {
             return false;
         }
-        return x == that.x && y == that.y;
+        return x == thatX && y == thatY;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
+    public boolean withinMap(Map map) {
+        return x < map.getRows() && x >= 0 &&
+               y < map.getColumns() && y >= 0;
+    }
+
+    public List<Coordinate> getNeighbors() {
+        return List.of(new Coordinate(x + 1, y),
+                new Coordinate(x, y + 1),
+                new Coordinate(x - 1, y),
+                new Coordinate(x, y - 1));
     }
 }
