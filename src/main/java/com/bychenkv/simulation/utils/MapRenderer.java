@@ -1,5 +1,6 @@
 package com.bychenkv.simulation.utils;
 
+import com.bychenkv.simulation.Coordinate;
 import com.bychenkv.simulation.Map;
 import com.bychenkv.simulation.entity.Entity;
 
@@ -27,8 +28,8 @@ public class MapRenderer {
     private void renderRow(int row) {
         renderRowBorder();
 
-        for (int y = 0; y < map.getColumns(); y++) {
-            renderCell(row, y);
+        for (int column = 0; column < map.getColumns(); column++) {
+            renderCell(row, column);
         }
 
         if (row == map.getRows() - 1) {
@@ -48,7 +49,7 @@ public class MapRenderer {
     private void renderCell(int x, int y) {
         System.out.print(CELL_VERTICAL_BORDER);
 
-        Entity entity = map.getEntity(x, y);
+        Entity entity = map.getEntity(new Coordinate(x, y));
         String content = Objects.requireNonNullElse(entity, " ").toString();
         System.out.print(getPaddedContent(content));
 
