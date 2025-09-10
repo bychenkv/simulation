@@ -1,6 +1,7 @@
 package com.bychenkv.simulation;
 
 import com.bychenkv.simulation.action.*;
+import com.bychenkv.simulation.utils.MapRenderer;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Simulation {
                 new ArrangeHerbivoresAction(map, DEFAULT_HERBIVORES_NUMBER),
                 new ArrangePredatorsAction(map, DEFAULT_PREDATORS_NUMBER));
 
-        turnActions = List.of();
+        turnActions = List.of(new MoveCreaturesAction(map));
     }
 
     public void start() {
@@ -38,7 +39,7 @@ public class Simulation {
             initAction.execute();
         }
 
-        while (moveCounter < 5) {
+        while (moveCounter < 2) {
             mapRenderer.render();
             moveCounter++;
             System.out.println("Move counter: " + moveCounter);
