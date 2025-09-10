@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class Map {
     private final int rows;
     private final int columns;
+
     private final java.util.Map<Coordinate, Entity> entities;
 
     public Map(int rows, int columns) {
@@ -23,15 +24,19 @@ public class Map {
         return columns;
     }
 
-    public Entity getEntity(int x, int y) {
-        return entities.get(new Coordinate(x, y));
+    public Entity getEntity(Coordinate coordinate) {
+        return entities.get(coordinate);
     }
 
     public java.util.Map<Coordinate, Entity> getEntities() {
         return new HashMap<>(entities);
     }
 
-    public void addEntity(int x, int y, Entity entity) {
-        entities.put(new Coordinate(x, y), entity);
+    public void addEntity(Coordinate coordinate, Entity entity) {
+        entities.put(coordinate, entity);
+    }
+
+    public void removeEntity(Coordinate coordinate) {
+        entities.remove(coordinate);
     }
 }
