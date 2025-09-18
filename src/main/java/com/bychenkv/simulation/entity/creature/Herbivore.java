@@ -1,0 +1,41 @@
+package com.bychenkv.simulation.entity.creature;
+
+import com.bychenkv.simulation.core.Position;
+import com.bychenkv.simulation.core.SimulationMap;
+import com.bychenkv.simulation.entity.Consumable;
+import com.bychenkv.simulation.entity.Entity;
+import com.bychenkv.simulation.entity.object.Grass;
+import com.bychenkv.simulation.utils.ResourceFinder;
+
+public class Herbivore extends Creature implements Consumable {
+    public Herbivore(int maxHp, int speed, int hpRestoreRate, ResourceFinder resourceFinder) {
+        super(maxHp, speed, resourceFinder);
+        this.hpRestoreRate = hpRestoreRate;
+    }
+
+    public void takeDamage(int damage) {
+        currentHp = Math.max(0, currentHp - damage);
+    }
+
+    public boolean isDead() {
+        return currentHp == 0;
+    }
+
+    @Override
+    public boolean canBeConsumedBy(Entity entity) {
+        return entity instanceof Predator;
+    }
+
+    @Override
+    protected void consumeResourceAt(SimulationMap map, Position resourcePosition) {
+        Grass grass = (Grass) map.getEntityAt(resourcePosition);
+        System.out.println(this + " meet " + grass + " on " + resourcePosition + " and eat it");
+
+        map.removeEntity(resourcePosition);
+    }
+
+    @Override
+    public String toString() {
+        return "\uD83D\uDC07";
+    }
+}
