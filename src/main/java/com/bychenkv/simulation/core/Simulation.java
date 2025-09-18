@@ -1,4 +1,4 @@
-package com.bychenkv.simulation;
+package com.bychenkv.simulation.core;
 
 import com.bychenkv.simulation.action.*;
 import com.bychenkv.simulation.utils.MapRenderer;
@@ -12,16 +12,14 @@ public class Simulation {
     private static final int DEFAULT_HERBIVORES_NUMBER = 5;
     private static final int DEFAULT_PREDATORS_NUMBER = 5;
 
-
     private final MapRenderer mapRenderer;
     private int moveCounter;
 
     private final List<Action> initActions;
     private final List<Action> turnActions;
 
-    public Simulation(int rows, int columns) {
-        Map map = new Map(rows, columns);
-        mapRenderer = new MapRenderer(map);
+    public Simulation(SimulationMap map, MapRenderer mapRenderer) {
+        this.mapRenderer = mapRenderer;
 
         initActions = List.of(new ArrangeRocksAction(map, DEFAULT_ROCKS_NUMBER),
                 new ArrangeTreesAction(map, DEFAULT_TREES_NUMBER),
@@ -39,7 +37,7 @@ public class Simulation {
             initAction.execute();
         }
 
-        while (moveCounter < 2) {
+        while (moveCounter < 10) {
             mapRenderer.render();
             moveCounter++;
             System.out.println("Move counter: " + moveCounter);

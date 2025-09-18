@@ -1,12 +1,12 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.Map;
+import com.bychenkv.simulation.core.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
-import com.bychenkv.simulation.entity.Rock;
+import com.bychenkv.simulation.entity.object.Rock;
 
 public class ArrangeRocksAction extends ArrangeEntitiesAction {
-    public ArrangeRocksAction(Map map, int rocksNumber) {
-        super(map, rocksNumber);
+    public ArrangeRocksAction(SimulationMap simulationMap, int rocksNumber) {
+        super(simulationMap, rocksNumber);
     }
 
     @Override

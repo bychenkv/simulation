@@ -1,11 +1,11 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.Map;
+import com.bychenkv.simulation.core.SimulationMap;
 
 public abstract class Action {
-    protected final Map map;
+    protected final SimulationMap map;
 
-    public Action(Map map) {
+    public Action(SimulationMap map) {
         this.map = map;
     }
 

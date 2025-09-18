@@ -1,12 +1,12 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.Map;
+import com.bychenkv.simulation.core.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
-import com.bychenkv.simulation.entity.Tree;
+import com.bychenkv.simulation.entity.object.Tree;
 
 public class ArrangeTreesAction extends ArrangeEntitiesAction {
-    public ArrangeTreesAction(Map map, int treesNumber) {
-        super(map, treesNumber);
+    public ArrangeTreesAction(SimulationMap simulationMap, int treesNumber) {
+        super(simulationMap, treesNumber);
     }
 
     @Override
