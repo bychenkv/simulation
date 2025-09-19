@@ -3,46 +3,36 @@ package com.bychenkv.simulation.utils;
 import com.bychenkv.simulation.core.Path;
 import com.bychenkv.simulation.core.Position;
 import com.bychenkv.simulation.core.SimulationMap;
-import com.bychenkv.simulation.entity.Consumable;
-import com.bychenkv.simulation.entity.creature.Creature;
 import com.bychenkv.simulation.entity.Entity;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class BfsResourceFinder implements ResourceFinder {
-    private final SimulationMap simulationMap;
+    private final SimulationMap map;
 
-    private final Map<Position, Position> transitions;
-    private final Set<Position> visited;
-    private final Queue<Position> queue;
-
-    public BfsResourceFinder(SimulationMap simulationMap) {
-        this.simulationMap = simulationMap;
-
-        transitions = new HashMap<>();
-        visited = new HashSet<>();
-        queue = new LinkedList<>();
+    public BfsResourceFinder(SimulationMap map) {
+        this.map = map;
     }
 
-    public Path findPath(Position start) {
-        Path path = new Path();
-        Creature creature = (Creature) simulationMap.getEntityAt(start);
+    public Path findPath(Position start, Predicate<Entity> stopCondition) {
+        Map<Position, Position> transitions = new HashMap<>();
+        Set<Position> visited = new HashSet<>();
+        Queue<Position> queue = new LinkedList<>();
 
-        reset();
         queue.offer(start);
         visited.add(start);
 
         while (!queue.isEmpty()) {
             Position current = queue.poll();
-            Entity entity = simulationMap.getEntityAt(current);
+            Entity entity = map.getEntityAt(current);
 
-            if (consumableFound(creature, entity)) {
-                path = reconstructPath(start, current);
-                break;
+            if (stopCondition.test(entity)) {
+                return reconstructPath(transitions, start, current);
             }
 
             for (Position neighbor : current.getNeighbors()) {
-                if (isAvailable(neighbor)) {
+                if (neighbor.withinMap(map) && !visited.contains(neighbor)) {
                     queue.offer(neighbor);
                     visited.add(neighbor);
                     transitions.put(neighbor, current);
@@ -50,33 +40,19 @@ public class BfsResourceFinder implements ResourceFinder {
             }
         }
 
-        return path;
+        return new Path();
     }
 
-    private static boolean consumableFound(Creature consumer, Entity entity) {
-        return entity instanceof Consumable consumable && consumable.canBeConsumedBy(consumer);
-    }
-
-    private boolean isAvailable(Position position) {
-        return position.withinMap(simulationMap) && !visited.contains(position);
-    }
-
-    private Path reconstructPath(Position start, Position end) {
+    private static Path reconstructPath(Map<Position, Position> transitions,
+                                        Position start,
+                                        Position end) {
         Path path = new Path();
         Position current = end;
-
         while (current != start) {
             path.add(current);
             current = transitions.get(current);
         }
-
         path.reverse();
         return path;
-    }
-
-    private void reset() {
-        transitions.clear();
-        visited.clear();
-        queue.clear();
     }
 }
