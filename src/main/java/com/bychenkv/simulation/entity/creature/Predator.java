@@ -2,6 +2,7 @@ package com.bychenkv.simulation.entity.creature;
 
 import com.bychenkv.simulation.core.Position;
 import com.bychenkv.simulation.core.SimulationMap;
+import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.utils.ResourceFinder;
 
 public class Predator extends Creature {
@@ -12,6 +13,11 @@ public class Predator extends Creature {
 
         this.attack = attack;
         this.hpRestoreRate = attack;
+    }
+
+    @Override
+    public boolean canConsume(Entity entity) {
+        return entity instanceof Herbivore;
     }
 
     @Override
@@ -26,10 +32,5 @@ public class Predator extends Creature {
             System.out.println(herbivore + " is dead");
             map.removeEntity(resourcePosition);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "\uD83D\uDC3A";
     }
 }

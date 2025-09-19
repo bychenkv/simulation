@@ -13,7 +13,6 @@ public abstract class Creature extends Entity {
 
     protected final int speed;
     protected final int maxHp;
-
     protected int currentHp;
     protected int hpRestoreRate;
 
@@ -21,17 +20,17 @@ public abstract class Creature extends Entity {
         this.resourceFinder = resourceFinder;
         this.maxHp = maxHp;
         this.speed = speed;
-
         currentHp = maxHp;
     }
 
     public void makeMove(SimulationMap map, Position currentPosition) {
-        Path path = resourceFinder.findPath(currentPosition);
+        Path path = resourceFinder.findPath(currentPosition, this::canConsume);
 
         switch (path.getLength()) {
             case 0 -> moveRandomly(map, currentPosition);
             case 1 -> {
-                consumeResourceAt(map, path.getResourcePosition());
+                Position resourcePosition = path.getResourcePosition();
+                consumeResourceAt(map, resourcePosition);
                 restoreHp();
             }
             default -> {
@@ -41,6 +40,8 @@ public abstract class Creature extends Entity {
         }
     }
 
+    public abstract boolean canConsume(Entity entity);
+
     protected abstract void consumeResourceAt(SimulationMap map, Position resourcePosition);
 
     protected void restoreHp() {
@@ -48,10 +49,17 @@ public abstract class Creature extends Entity {
     }
 
     private void moveRandomly(SimulationMap map, Position currentPosition) {
-        List<Position> neighbors = currentPosition.getNeighbors();
+        Position nextPosition = currentPosition;
 
-        int randomIndex = ThreadLocalRandom.current().nextInt(neighbors.size());
-        Position nextPosition = neighbors.get(randomIndex);
+        for (int i = 0; i < speed; i++) {
+            List<Position> neighbors = currentPosition.getNeighbors()
+                    .stream()
+                    .filter(p -> p.withinMap(map) && map.getEntityAt(p) == null)
+                    .toList();
+
+            int randomIndex = ThreadLocalRandom.current().nextInt(neighbors.size());
+            nextPosition = neighbors.get(randomIndex);
+        }
 
         changePosition(map, currentPosition, nextPosition);
     }

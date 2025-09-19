@@ -2,12 +2,11 @@ package com.bychenkv.simulation.entity.creature;
 
 import com.bychenkv.simulation.core.Position;
 import com.bychenkv.simulation.core.SimulationMap;
-import com.bychenkv.simulation.entity.Consumable;
 import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.utils.ResourceFinder;
 
-public class Herbivore extends Creature implements Consumable {
+public class Herbivore extends Creature {
     public Herbivore(int maxHp, int speed, int hpRestoreRate, ResourceFinder resourceFinder) {
         super(maxHp, speed, resourceFinder);
         this.hpRestoreRate = hpRestoreRate;
@@ -22,8 +21,8 @@ public class Herbivore extends Creature implements Consumable {
     }
 
     @Override
-    public boolean canBeConsumedBy(Entity entity) {
-        return entity instanceof Predator;
+    public boolean canConsume(Entity entity) {
+        return entity instanceof Grass;
     }
 
     @Override
@@ -32,10 +31,5 @@ public class Herbivore extends Creature implements Consumable {
         System.out.println(this + " meet " + grass + " on " + resourcePosition + " and eat it");
 
         map.removeEntity(resourcePosition);
-    }
-
-    @Override
-    public String toString() {
-        return "\uD83D\uDC07";
     }
 }

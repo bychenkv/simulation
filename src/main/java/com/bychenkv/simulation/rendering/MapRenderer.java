@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.utils;
+package com.bychenkv.simulation.rendering;
 
 public interface MapRenderer {
     void render();
