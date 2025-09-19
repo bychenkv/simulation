@@ -7,13 +7,9 @@ import com.bychenkv.simulation.entity.creature.Creature;
 
 import java.util.Map;
 
-public class MoveCreaturesAction extends Action {
-    public MoveCreaturesAction(SimulationMap map) {
-        super(map);
-    }
-
+public class MoveCreatures extends Action {
     @Override
-    public void execute() {
+    public void execute(SimulationMap map) {
         for (Map.Entry<Position, Entity> entry : map.getEntityPositions().entrySet()) {
             if (entry.getValue() instanceof Creature creature) {
                 creature.makeMove(map, entry.getKey());

@@ -8,18 +8,24 @@ import java.util.Map;
 public class SimulationMap {
     private final int height;
     private final int width;
-
     private final Map<Position, Entity> entityPositions;
 
     public SimulationMap(int height, int width) {
         this.height = height;
         this.width = width;
-
         entityPositions = new HashMap<>();
+    }
+
+    public boolean isOccupied(Position position) {
+        return entityPositions.containsKey(position);
     }
 
     public Entity getEntityAt(Position position) {
         return entityPositions.get(position);
+    }
+
+    public Entity getEntityAt(int x, int y) {
+        return entityPositions.get(new Position(x, y));
     }
 
     public void addEntity(Position position, Entity entity) {
