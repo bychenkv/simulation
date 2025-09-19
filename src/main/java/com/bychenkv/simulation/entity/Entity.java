@@ -1,4 +1,4 @@
 package com.bychenkv.simulation.entity;
 
-public class Entity {
+public abstract class Entity {
 }
