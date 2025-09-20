@@ -7,67 +7,83 @@ import java.io.PrintStream;
 
 public class ConsoleMapRenderer implements MapRenderer {
     private static final int CELL_WIDTH = 5;
-
-    private static final String CELL_CORNER = "+";
-    private static final String CELL_HORIZONTAL_BORDER = "-";
-    private static final String CELL_VERTICAL_BORDER = "|";
+    private static final String CELL_BORDER = "+";
+    private static final String HORIZONTAL_BORDER = "-";
+    private static final String VERTICAL_BORDER = "|";
     private static final String EMPTY_CELL = " ";
 
-    private final SimulationMap simulationMap;
+    private final SimulationMap map;
     private final PrintStream printStream;
     private final EntityRenderer entityRenderer;
 
-    public ConsoleMapRenderer(SimulationMap simulationMap,
+    public ConsoleMapRenderer(SimulationMap map,
                               PrintStream printStream,
                               EntityRenderer entityRenderer) {
-        this.simulationMap = simulationMap;
+        this.map = map;
         this.printStream = printStream;
         this.entityRenderer = entityRenderer;
     }
 
     public void render() {
-        for (int row = 0; row < simulationMap.getHeight(); row++) {
-            renderRow(row);
-        }
-    }
-
-    private void renderRow(int row) {
-        renderRowBorder();
-        for (int column = 0; column < simulationMap.getWidth(); column++) {
-            renderCell(row, column);
-        }
-        if (row == simulationMap.getHeight() - 1) {
-            renderRowBorder();
-        }
-    }
-
-    private void renderRowBorder() {
-        String rowBorder = CELL_CORNER + CELL_HORIZONTAL_BORDER.repeat(CELL_WIDTH);
-
-        for (int column = 0; column < simulationMap.getWidth(); column++) {
-            printStream.print(rowBorder);
-            if (column == simulationMap.getWidth() - 1) {
-                printStream.println(CELL_CORNER);
+        for (int row = 0; row <= map.getHeight(); row++) {
+            for (int column = 0; column <= map.getWidth(); column++) {
+                renderCell(row, column);
             }
+            renderHorizontalBorderLine();
         }
+    }
+
+    private void renderHorizontalBorderLine() {
+        String borderLineSegment = HORIZONTAL_BORDER.repeat(CELL_WIDTH) + CELL_BORDER;
+        String horizontalBorderLine = borderLineSegment.repeat(map.getWidth() + 1);
+        printStream.format("\n%s\n", horizontalBorderLine);
     }
 
     private void renderCell(int row, int column) {
-        printStream.print(CELL_VERTICAL_BORDER);
-        printStream.print(getCellContent(row, column));
-
-        if (column == simulationMap.getWidth() - 1) {
-            printStream.println(CELL_VERTICAL_BORDER);
-        }
+        String content = getCellContent(row, column);
+        printStream.print(getPaddedContent(content) + VERTICAL_BORDER);
     }
 
     private String getCellContent(int row, int column) {
-        Entity entity = simulationMap.getEntityAt(row, column);
-        String sprite = entity != null ? entityRenderer.render(entity) : EMPTY_CELL;
+        if (isHeaderCorner(row, column)) {
+            return EMPTY_CELL;
+        }
+        if (isRowHeader(column)) {
+            return String.valueOf(row - 1);
+        }
+        if (isColumnHeader(row)) {
+            return String.valueOf(column - 1);
+        }
+        return getMapCellContent(row - 1, column - 1);
+    }
 
-        int paddingLeft = (CELL_WIDTH - sprite.length()) / 2;
-        int paddingRight = CELL_WIDTH - paddingLeft - sprite.length();
+    private static boolean isHeaderCorner(int row, int column) {
+        return row == 0 && column == 0;
+    }
 
-        return " ".repeat(paddingLeft) + sprite + " ".repeat(paddingRight);
+    private static boolean isRowHeader(int column) {
+        return column == 0;
+    }
+
+    private static boolean isColumnHeader(int row) {
+        return row == 0;
+    }
+
+    private String getMapCellContent(int x, int y) {
+        Entity entity = map.getEntityAt(x, y);
+        if (entity != null) {
+            return entityRenderer.render(entity);
+        }
+
+        return EMPTY_CELL;
+    }
+
+    private static String getPaddedContent(String content) {
+        int contentLength = content.length();
+
+        int paddingLeft = (CELL_WIDTH - contentLength) / 2;
+        int paddingRight = CELL_WIDTH - paddingLeft - contentLength;
+
+        return " ".repeat(paddingLeft) + content + " ".repeat(paddingRight);
     }
 }
