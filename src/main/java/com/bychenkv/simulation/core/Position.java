@@ -1,25 +1,32 @@
 package com.bychenkv.simulation.core;
 
+import java.util.Arrays;
 import java.util.List;
 
 public record Position(int x, int y) {
+    private static final Direction[] DIRECTIONS = Direction.values();
+
+    public Position add(int dx, int dy) {
+        return new Position(x + dx, y + dy);
+    }
+
+    public List<Position> getNeighborsWithinBounds(int height, int width) {
+        return Arrays.stream(DIRECTIONS)
+                .map(this::move)
+                .filter(p -> p.isWithin(height, width))
+                .toList();
+    }
+
+    private Position move(Direction direction) {
+        return direction.applyTo(this);
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Position(int thatX, int thatY))) {
-            return false;
-        }
-        return x == thatX && y == thatY;
+    public String toString() {
+        return "(%d, %d)".formatted(x, y);
     }
 
-    public boolean withinMap(SimulationMap simulationMap) {
-        return x < simulationMap.getHeight() && x >= 0 &&
-               y < simulationMap.getWidth() && y >= 0;
-    }
-
-    public List<Position> getNeighbors() {
-        return List.of(new Position(x + 1, y),
-                new Position(x, y + 1),
-                new Position(x - 1, y),
-                new Position(x, y - 1));
+    private boolean isWithin(int height, int width) {
+        return x < height && x >= 0 && y < width && y >= 0;
     }
 }
