@@ -16,43 +16,50 @@ public class BfsResourceFinder implements ResourceFinder {
     }
 
     public Path findPath(Position start, Predicate<Entity> stopCondition) {
-        Map<Position, Position> transitions = new HashMap<>();
-        Set<Position> visited = new HashSet<>();
-        Queue<Position> queue = new LinkedList<>();
+        BfsResourceFinderContext context = new BfsResourceFinderContext(start);
 
-        queue.offer(start);
-        visited.add(start);
+        while (context.hasNextPosition()) {
+            Position current = context.pollNextPosition();
 
-        while (!queue.isEmpty()) {
-            Position current = queue.poll();
-            Entity entity = map.getEntityAt(current);
-
-            if (stopCondition.test(entity)) {
-                return reconstructPath(transitions, start, current);
-            }
-
-            for (Position neighbor : current.getNeighbors()) {
-                if (neighbor.withinMap(map) && !visited.contains(neighbor)) {
-                    queue.offer(neighbor);
-                    visited.add(neighbor);
-                    transitions.put(neighbor, current);
+            for (Position neighbor : getUnvisitedNeighbors(current, context)) {
+                Optional<Path> path = processNeighbor(neighbor, current, context, stopCondition);
+                if (path.isPresent()) {
+                    return path.get();
                 }
             }
         }
 
-        return new Path();
+        return Path.empty();
     }
 
-    private static Path reconstructPath(Map<Position, Position> transitions,
-                                        Position start,
-                                        Position end) {
-        Path path = new Path();
-        Position current = end;
-        while (current != start) {
-            path.add(current);
-            current = transitions.get(current);
+    private List<Position> getUnvisitedNeighbors(Position current, BfsResourceFinderContext context) {
+        return current.getNeighborsWithinBounds(map.getHeight(), map.getWidth())
+                .stream()
+                .filter(neighbor -> !context.isVisited(neighbor))
+                .toList();
+    }
+
+    private Optional<Path> processNeighbor(Position neighbor,
+                                       Position parent,
+                                       BfsResourceFinderContext context,
+                                       Predicate<Entity> stopCondition) {
+        Entity entity = map.getEntityAt(neighbor);
+
+        if (!isTraversable(entity, stopCondition)) {
+            return Optional.empty();
         }
-        path.reverse();
-        return path;
+
+        context.addTransition(neighbor, parent);
+
+        if (stopCondition.test(entity)) {
+            return Optional.of(context.reconstructPath(neighbor));
+        }
+
+        context.enqueuePosition(neighbor);
+        return Optional.empty();
+    }
+
+    private boolean isTraversable(Entity entity, Predicate<Entity> stopCondition) {
+        return entity == null || stopCondition.test(entity);
     }
 }
