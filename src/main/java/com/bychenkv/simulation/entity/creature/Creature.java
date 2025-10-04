@@ -52,10 +52,14 @@ public abstract class Creature extends Entity {
         Position nextPosition = currentPosition;
 
         for (int i = 0; i < speed; i++) {
-            List<Position> neighbors = currentPosition.getNeighbors()
+            List<Position> neighbors = currentPosition.getNeighborsWithinBounds(map.getHeight(), map.getWidth())
                     .stream()
-                    .filter(p -> p.withinMap(map) && map.getEntityAt(p) == null)
+                    .filter(p -> !map.isOccupied(p))
                     .toList();
+
+            if (neighbors.isEmpty()) {
+                break;
+            }
 
             int randomIndex = ThreadLocalRandom.current().nextInt(neighbors.size());
             nextPosition = neighbors.get(randomIndex);
@@ -65,7 +69,7 @@ public abstract class Creature extends Entity {
     }
 
     private void changePosition(SimulationMap map, Position currentPosition, Position nextPosition) {
-        map.removeEntity(currentPosition);
+        map.removeEntityAt(currentPosition);
         map.addEntity(nextPosition, this);
 
         System.out.println(this + " has moved from " + currentPosition + " to " + nextPosition);
