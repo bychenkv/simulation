@@ -10,9 +10,14 @@ import java.util.Map;
 public class MoveCreatures extends Action {
     @Override
     public void execute(SimulationMap map) {
-        for (Map.Entry<Position, Entity> entry : map.getEntityPositions().entrySet()) {
-            if (entry.getValue() instanceof Creature creature) {
-                creature.makeMove(map, entry.getKey());
+        Map<Position, Entity> entityPositions = map.getEntityPositions();
+
+        for (Entity entity : entityPositions.values()) {
+            if (entity instanceof Creature creature) {
+                Position currentPosition = map.getEntityPosition(creature);
+                if (currentPosition != null) {
+                    creature.makeMove(map, currentPosition);
+                }
             }
         }
     }
