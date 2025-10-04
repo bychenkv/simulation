@@ -30,6 +30,11 @@ public class Herbivore extends Creature {
         Grass grass = (Grass) map.getEntityAt(resourcePosition);
         System.out.println(this + " meet " + grass + " on " + resourcePosition + " and eat it");
 
-        map.removeEntity(resourcePosition);
+        map.removeEntityAt(resourcePosition);
+    }
+
+    @Override
+    public String toString() {
+        return Herbivore.class.getSimpleName();
     }
 }

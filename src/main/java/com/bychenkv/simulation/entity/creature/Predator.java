@@ -30,7 +30,12 @@ public class Predator extends Creature {
 
         if (herbivore.isDead()) {
             System.out.println(herbivore + " is dead");
-            map.removeEntity(resourcePosition);
+            map.removeEntityAt(resourcePosition);
         }
+    }
+
+    @Override
+    public String toString() {
+        return Predator.class.getSimpleName();
     }
 }
