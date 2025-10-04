@@ -11,6 +11,10 @@ public class Path {
         positions = new ArrayList<>();
     }
 
+    public static Path empty() {
+        return new Path();
+    }
+
     public int getLength() {
         return positions.size();
     }
@@ -28,7 +32,7 @@ public class Path {
     }
 
     public Position getNextPosition(int stepSize) {
-        int nextPositionPathIndex = Math.min(positions.size(), stepSize) - 1;
+        int nextPositionPathIndex = Math.min(positions.size() - 1, stepSize) - 1;
         return positions.get(nextPositionPathIndex);
     }
 }
