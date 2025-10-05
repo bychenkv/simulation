@@ -33,9 +33,9 @@ public class BfsResourceFinder implements ResourceFinder {
     }
 
     private List<Position> getUnvisitedNeighbors(Position current, BfsResourceFinderContext context) {
-        return current.getNeighborsWithinBounds(map.getHeight(), map.getWidth())
+        return current.getNeighbors()
                 .stream()
-                .filter(neighbor -> !context.isVisited(neighbor))
+                .filter(neighbor -> map.getBounds().contains(neighbor) && !context.isVisited(neighbor))
                 .toList();
     }
 

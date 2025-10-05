@@ -45,7 +45,7 @@ public class BfsResourceFinderContext {
     }
 
     public Path reconstructPath(Position end) {
-        Path path = new Path();
+        Path path = Path.empty();
         Position current = end;
 
         while (current != start) {

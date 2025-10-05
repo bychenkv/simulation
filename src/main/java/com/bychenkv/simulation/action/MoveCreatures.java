@@ -2,22 +2,19 @@ package com.bychenkv.simulation.action;
 
 import com.bychenkv.simulation.core.Position;
 import com.bychenkv.simulation.core.SimulationMap;
-import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.entity.creature.Creature;
 
-import java.util.Map;
+import java.util.List;
 
 public class MoveCreatures extends Action {
     @Override
     public void execute(SimulationMap map) {
-        Map<Position, Entity> entityPositions = map.getEntityPositions();
+        List<Creature> creatures = map.getEntitiesOfType(Creature.class);
 
-        for (Entity entity : entityPositions.values()) {
-            if (entity instanceof Creature creature) {
-                Position currentPosition = map.getEntityPosition(creature);
-                if (currentPosition != null) {
-                    creature.makeMove(map, currentPosition);
-                }
+        for (Creature creature : creatures) {
+            Position currentPosition = map.getEntityPosition(creature);
+            if (currentPosition != null) {
+                creature.makeMove(map, currentPosition);
             }
         }
     }

@@ -3,18 +3,17 @@ package com.bychenkv.simulation.core;
 import com.bychenkv.simulation.entity.Entity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SimulationMap {
-    private final int height;
-    private final int width;
+    private final MapBounds bounds;
 
     private final Map<Position, Entity> positionToEntity = new HashMap<>();
     private final Map<Entity, Position> entityToPosition = new HashMap<>();
 
-    public SimulationMap(int height, int width) {
-        this.height = height;
-        this.width = width;
+    public SimulationMap(MapBounds bounds) {
+        this.bounds = bounds;
     }
 
     public boolean isOccupied(Position position) {
@@ -22,11 +21,6 @@ public class SimulationMap {
     }
 
     public Entity getEntityAt(Position position) {
-        return positionToEntity.get(position);
-    }
-
-    public Entity getEntityAt(int x, int y) {
-        Position position = new Position(x, y);
         return positionToEntity.get(position);
     }
 
@@ -51,15 +45,15 @@ public class SimulationMap {
         }
     }
 
-    public Map<Position, Entity> getEntityPositions() {
-        return new HashMap<>(positionToEntity);
+    public <T extends Entity> List<T> getEntitiesOfType(Class<T> type) {
+        return positionToEntity.values()
+                .stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .toList();
     }
 
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
+    public MapBounds getBounds() {
+        return bounds;
     }
 }

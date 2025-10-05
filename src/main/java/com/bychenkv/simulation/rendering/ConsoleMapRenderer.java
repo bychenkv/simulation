@@ -1,5 +1,7 @@
 package com.bychenkv.simulation.rendering;
 
+import com.bychenkv.simulation.core.MapBounds;
+import com.bychenkv.simulation.core.Position;
 import com.bychenkv.simulation.core.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
 
@@ -25,8 +27,10 @@ public class ConsoleMapRenderer implements MapRenderer {
     }
 
     public void render() {
-        for (int row = 0; row <= map.getHeight(); row++) {
-            for (int column = 0; column <= map.getWidth(); column++) {
+        MapBounds bounds = map.getBounds();
+
+        for (int row = 0; row <= bounds.height(); row++) {
+            for (int column = 0; column <= bounds.width(); column++) {
                 renderCell(row, column);
             }
             renderHorizontalBorderLine();
@@ -35,7 +39,7 @@ public class ConsoleMapRenderer implements MapRenderer {
 
     private void renderHorizontalBorderLine() {
         String borderLineSegment = HORIZONTAL_BORDER.repeat(CELL_WIDTH) + CELL_BORDER;
-        String horizontalBorderLine = borderLineSegment.repeat(map.getWidth() + 1);
+        String horizontalBorderLine = borderLineSegment.repeat(map.getBounds().width() + 1);
         printStream.format("\n%s\n", horizontalBorderLine);
     }
 
@@ -70,7 +74,8 @@ public class ConsoleMapRenderer implements MapRenderer {
     }
 
     private String getMapCellContent(int x, int y) {
-        Entity entity = map.getEntityAt(x, y);
+        Position position = new Position(x, y);
+        Entity entity = map.getEntityAt(position);
         if (entity != null) {
             return entityRenderer.render(entity);
         }

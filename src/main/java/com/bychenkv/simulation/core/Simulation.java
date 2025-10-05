@@ -1,49 +1,25 @@
 package com.bychenkv.simulation.core;
 
 import com.bychenkv.simulation.action.Action;
-import com.bychenkv.simulation.action.ArrangeEntities;
-import com.bychenkv.simulation.action.MoveCreatures;
-import com.bychenkv.simulation.entity.creature.Herbivore;
-import com.bychenkv.simulation.entity.creature.Predator;
-import com.bychenkv.simulation.entity.object.Grass;
-import com.bychenkv.simulation.entity.object.Rock;
-import com.bychenkv.simulation.entity.object.Tree;
 import com.bychenkv.simulation.rendering.MapRenderer;
-import com.bychenkv.simulation.utils.ResourceFinder;
 
 import java.util.List;
 
 public class Simulation {
-    private static final int DEFAULT_ROCKS_NUMBER = 5;
-    private static final int DEFAULT_TREES_NUMBER = 5;
-    private static final int DEFAULT_GRASS_NUMBER = 5;
-    private static final int DEFAULT_HERBIVORES_NUMBER = 5;
-    private static final int DEFAULT_PREDATORS_NUMBER = 5;
-
-    private int moveCounter;
+    private int iterationCount;
     private final SimulationMap map;
     private final MapRenderer mapRenderer;
     private final List<Action> initActions;
     private final List<Action> turnActions;
 
-    public Simulation(SimulationMap map, MapRenderer mapRenderer, ResourceFinder resourceFinder) {
+    public Simulation(SimulationMap map,
+                      MapRenderer mapRenderer,
+                      List<Action> initActions,
+                      List<Action> turnActions) {
         this.map = map;
         this.mapRenderer = mapRenderer;
-
-        initActions = List.of(
-                new ArrangeEntities(DEFAULT_ROCKS_NUMBER, Rock::new),
-                new ArrangeEntities(DEFAULT_TREES_NUMBER, Tree::new),
-                new ArrangeEntities(DEFAULT_GRASS_NUMBER, Grass::new),
-                new ArrangeEntities(
-                    DEFAULT_HERBIVORES_NUMBER,
-                    () -> new Herbivore(2, 2, 1, resourceFinder)
-                ),
-                new ArrangeEntities(
-                    DEFAULT_PREDATORS_NUMBER,
-                    () -> new Predator(2, 3, 1, resourceFinder)
-                )
-        );
-        turnActions = List.of(new MoveCreatures());
+        this.initActions = initActions;
+        this.turnActions = turnActions;
     }
 
     public void start() {
@@ -53,14 +29,14 @@ public class Simulation {
             initAction.execute(map);
         }
 
-        while (moveCounter < 10) {
+        while (iterationCount < 10) {
+            System.out.println("Move counter: " + iterationCount);
             mapRenderer.render();
-            moveCounter++;
-            System.out.println("Move counter: " + moveCounter);
 
             for (Action turnAction : turnActions) {
                 turnAction.execute(map);
             }
+            iterationCount++;
         }
     }
 }

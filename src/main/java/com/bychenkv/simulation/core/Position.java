@@ -10,23 +10,18 @@ public record Position(int x, int y) {
         return new Position(x + dx, y + dy);
     }
 
-    public List<Position> getNeighborsWithinBounds(int height, int width) {
+    public List<Position> getNeighbors() {
         return Arrays.stream(DIRECTIONS)
-                .map(this::move)
-                .filter(p -> p.isWithin(height, width))
+                .map(this::offset)
                 .toList();
     }
 
-    private Position move(Direction direction) {
+    private Position offset(Direction direction) {
         return direction.applyTo(this);
     }
 
     @Override
     public String toString() {
         return "(%d, %d)".formatted(x, y);
-    }
-
-    private boolean isWithin(int height, int width) {
-        return x < height && x >= 0 && y < width && y >= 0;
     }
 }

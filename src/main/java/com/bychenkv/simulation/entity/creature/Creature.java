@@ -24,6 +24,8 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(SimulationMap map, Position currentPosition) {
+        System.out.println(this + " at " + currentPosition + " make a move");
+
         Path path = resourceFinder.findPath(currentPosition, this::canConsume);
 
         switch (path.getLength()) {
@@ -52,9 +54,9 @@ public abstract class Creature extends Entity {
         Position nextPosition = currentPosition;
 
         for (int i = 0; i < speed; i++) {
-            List<Position> neighbors = currentPosition.getNeighborsWithinBounds(map.getHeight(), map.getWidth())
+            List<Position> neighbors = currentPosition.getNeighbors()
                     .stream()
-                    .filter(p -> !map.isOccupied(p))
+                    .filter(p -> map.getBounds().contains(p) && !map.isOccupied(p))
                     .toList();
 
             if (neighbors.isEmpty()) {
