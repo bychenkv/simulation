@@ -17,7 +17,7 @@ public record MapBounds(int height, int width) {
         return new Position(x, y);
     }
 
-    public static MapBounds defaultBounds() {
+    public static MapBounds withDefaults() {
         return new MapBounds(DEFAULT_HEIGHT, DEFAULT_WIDTH);
     }
 }

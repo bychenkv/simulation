@@ -6,7 +6,7 @@ import com.bychenkv.simulation.core.Simulation;
 
 public class Launcher {
     public static void main(String[] args) {
-        SimulationConfig config = SimulationConfig.defaultConfig();
+        SimulationConfig config = SimulationConfig.withDefaults();
         Simulation simulation = new DefaultSimulationFactory(config)
                 .createSimulation();
         simulation.start();

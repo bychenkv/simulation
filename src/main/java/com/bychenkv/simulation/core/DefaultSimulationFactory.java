@@ -2,10 +2,14 @@ package com.bychenkv.simulation.core;
 
 import com.bychenkv.simulation.action.Action;
 import com.bychenkv.simulation.action.MoveCreatures;
-import com.bychenkv.simulation.action.PopulateEntities;
+import com.bychenkv.simulation.action.SpawnEntities;
+import com.bychenkv.simulation.config.CreaturesConfig;
+import com.bychenkv.simulation.config.EntitySpawnConfig;
 import com.bychenkv.simulation.config.SimulationConfig;
-import com.bychenkv.simulation.entity.creature.Herbivore;
-import com.bychenkv.simulation.entity.creature.Predator;
+import com.bychenkv.simulation.entity.Entity;
+import com.bychenkv.simulation.entity.creature.*;
+import com.bychenkv.simulation.entity.creature.factory.HerbivoreFactory;
+import com.bychenkv.simulation.entity.creature.factory.PredatorFactory;
 import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.entity.object.Rock;
 import com.bychenkv.simulation.entity.object.Tree;
@@ -19,6 +23,7 @@ import com.bychenkv.simulation.utils.BfsResourceFinder;
 import com.bychenkv.simulation.utils.ResourceFinder;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class DefaultSimulationFactory implements SimulationFactory {
     private final SimulationConfig simulationConfig;
@@ -31,28 +36,11 @@ public class DefaultSimulationFactory implements SimulationFactory {
     public Simulation createSimulation() {
         SimulationMap map = createMap();
         MapRenderer mapRenderer = createMapRenderer(map);
+
         ResourceFinder resourceFinder = new BfsResourceFinder(map);
+        SimulationActions actions = createActions(resourceFinder);
 
-        List<Action> initActions = List.of(
-                createRocksPopulation(),
-                createTreesPopulation(),
-                createGrassPopulation(),
-                createHerbivoresPopulation(resourceFinder),
-                createPredatorsPopulation(resourceFinder)
-        );
-
-        List<Action> turnActions = List.of(
-                new MoveCreatures(),
-                createGrassPopulation(),
-                createHerbivoresPopulation(resourceFinder)
-        );
-
-        return new Simulation.Builder()
-                .withMap(map)
-                .withRenderer(mapRenderer)
-                .withInitActions(initActions)
-                .withTurnActions(turnActions)
-                .build();
+        return new Simulation(map, mapRenderer, actions);
     }
 
     private SimulationMap createMap() {
@@ -65,43 +53,41 @@ public class DefaultSimulationFactory implements SimulationFactory {
         return new ConsoleMapRenderer(map, System.out, entityRenderer);
     }
 
-    private Action createRocksPopulation() {
-        return new PopulateEntities<>(
-                Rock.class,
-                simulationConfig.populationConfig().getRocksNumber(),
-                Rock::new
+    private SimulationActions createActions(ResourceFinder resourceFinder) {
+        EntitySpawnConfig spawn = simulationConfig.spawn();
+        CreaturesConfig creaturesConfig = simulationConfig.creatures();
+
+        HerbivoreFactory herbivoreFactory = new HerbivoreFactory(
+                creaturesConfig.herbivore(),
+                resourceFinder
         );
+        PredatorFactory predatorFactory = new PredatorFactory(
+                creaturesConfig.predator(),
+                resourceFinder
+        );
+
+        List<Action> initActions = List.of(
+                spawnEntities(Rock.class, spawn.rocks(), Rock::new),
+                spawnEntities(Tree.class, spawn.trees(), Tree::new),
+                spawnEntities(Grass.class, spawn.grass(), Grass::new),
+                spawnEntities(Herbivore.class, spawn.herbivores(), herbivoreFactory::create),
+                spawnEntities(Predator.class, spawn.predators(), predatorFactory::create)
+        );
+
+        List<Action> turnActions = List.of(
+                new MoveCreatures(),
+                spawnEntities(Grass.class, spawn.grass(), Grass::new),
+                spawnEntities(Herbivore.class, spawn.herbivores(), herbivoreFactory::create)
+        );
+
+        return new SimulationActions(initActions, turnActions);
     }
 
-    private Action createTreesPopulation() {
-        return new PopulateEntities<>(
-                Tree.class,
-                simulationConfig.populationConfig().getTreesNumber(),
-                Tree::new
-        );
-    }
-
-    private Action createGrassPopulation() {
-        return new PopulateEntities<>(
-                Grass.class,
-                simulationConfig.populationConfig().getGrassNumber(),
-                Grass::new
-        );
-    }
-
-    private Action createHerbivoresPopulation(ResourceFinder resourceFinder) {
-        return new PopulateEntities<>(
-                Herbivore.class,
-                simulationConfig.populationConfig().getHerbivoresNumber(),
-                () -> new Herbivore(2, 2, 1, resourceFinder)
-        );
-    }
-
-    private Action createPredatorsPopulation(ResourceFinder resourceFinder) {
-        return new PopulateEntities<>(
-                Predator.class,
-                simulationConfig.populationConfig().getPredatorsNumber(),
-                () -> new Predator(2, 3, 1, resourceFinder)
-        );
+    private <T extends Entity> Action spawnEntities(
+            Class<T> type,
+            int count,
+            Supplier<T> factory
+    ) {
+        return new SpawnEntities<>(type, count, factory);
     }
 }

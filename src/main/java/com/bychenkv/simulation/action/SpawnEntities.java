@@ -7,13 +7,13 @@ import com.bychenkv.simulation.map.SimulationMap;
 import java.util.Random;
 import java.util.function.Supplier;
 
-public class PopulateEntities<T extends Entity> extends Action {
+public class SpawnEntities<T extends Entity> extends Action {
     private final Class<T> entityType;
     private final int targetCount;
     private final Supplier<T> entityFactory;
     private final Random random = new Random();
 
-    public PopulateEntities(Class<T> entityType, int targetCount, Supplier<T> entityFactory) {
+    public SpawnEntities(Class<T> entityType, int targetCount, Supplier<T> entityFactory) {
         this.entityType = entityType;
         this.targetCount = targetCount;
         this.entityFactory = entityFactory;
