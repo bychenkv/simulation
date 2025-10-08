@@ -1,8 +1,8 @@
 package com.bychenkv.simulation.rendering;
 
-import com.bychenkv.simulation.core.MapBounds;
-import com.bychenkv.simulation.core.Position;
-import com.bychenkv.simulation.core.SimulationMap;
+import com.bychenkv.simulation.map.MapBounds;
+import com.bychenkv.simulation.map.Position;
+import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
 
 import java.io.PrintStream;

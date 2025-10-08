@@ -1,8 +1,8 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.core.Position;
+import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.entity.Entity;
-import com.bychenkv.simulation.core.SimulationMap;
+import com.bychenkv.simulation.map.SimulationMap;
 
 import java.util.Random;
 import java.util.function.Supplier;

@@ -1,7 +1,6 @@
 package com.bychenkv.simulation.utils;
 
-import com.bychenkv.simulation.core.Path;
-import com.bychenkv.simulation.core.Position;
+import com.bychenkv.simulation.map.Position;
 
 import java.util.*;
 

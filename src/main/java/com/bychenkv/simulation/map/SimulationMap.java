@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.core;
+package com.bychenkv.simulation.map;
 
 import com.bychenkv.simulation.entity.Entity;
 

@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.core;
+package com.bychenkv.simulation.map;
 
 public enum Direction {
     NORTH(-1, 0),

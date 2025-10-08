@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.core;
+package com.bychenkv.simulation.map;
 
 import java.util.Arrays;
 import java.util.List;

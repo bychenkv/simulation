@@ -1,7 +1,7 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.core.Position;
-import com.bychenkv.simulation.core.SimulationMap;
+import com.bychenkv.simulation.map.Position;
+import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.creature.Creature;
 
 import java.util.List;

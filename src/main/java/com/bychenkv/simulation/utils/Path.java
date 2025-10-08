@@ -1,4 +1,6 @@
-package com.bychenkv.simulation.core;
+package com.bychenkv.simulation.utils;
+
+import com.bychenkv.simulation.map.Position;
 
 import java.util.ArrayList;
 import java.util.Collections;

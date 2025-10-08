@@ -1,8 +1,11 @@
-package com.bychenkv.simulation.core;
+package com.bychenkv.simulation.map;
 
 import java.util.Random;
 
 public record MapBounds(int height, int width) {
+    private static final int DEFAULT_HEIGHT = 10;
+    private static final int DEFAULT_WIDTH = 10;
+
     public boolean contains(Position position) {
         return position.x() >= 0 && position.x() < height
                && position.y() >= 0 && position.y() < width;
@@ -12,5 +15,9 @@ public record MapBounds(int height, int width) {
         int x = random.nextInt(height);
         int y = random.nextInt(width);
         return new Position(x, y);
+    }
+
+    public static MapBounds defaultBounds() {
+        return new MapBounds(DEFAULT_HEIGHT, DEFAULT_WIDTH);
     }
 }
