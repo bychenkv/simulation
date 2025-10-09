@@ -55,14 +55,14 @@ public class DefaultSimulationFactory implements SimulationFactory {
 
     private SimulationActions createActions(ResourceFinder resourceFinder) {
         EntitySpawnConfig spawn = simulationConfig.spawn();
-        CreaturesConfig creaturesConfig = simulationConfig.creatures();
+        CreaturesConfig creatures = simulationConfig.creatures();
 
         HerbivoreFactory herbivoreFactory = new HerbivoreFactory(
-                creaturesConfig.herbivore(),
+                creatures.herbivore(),
                 resourceFinder
         );
         PredatorFactory predatorFactory = new PredatorFactory(
-                creaturesConfig.predator(),
+                creatures.predator(),
                 resourceFinder
         );
 

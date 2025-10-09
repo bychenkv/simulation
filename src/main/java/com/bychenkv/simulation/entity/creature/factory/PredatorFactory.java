@@ -4,13 +4,9 @@ import com.bychenkv.simulation.config.PredatorConfig;
 import com.bychenkv.simulation.entity.creature.Predator;
 import com.bychenkv.simulation.utils.ResourceFinder;
 
-public class PredatorFactory implements CreatureFactory<Predator> {
-    private final PredatorConfig config;
-    private final ResourceFinder resourceFinder;
-
+public class PredatorFactory extends CreatureFactory<Predator, PredatorConfig> {
     public PredatorFactory(PredatorConfig config, ResourceFinder resourceFinder) {
-        this.config = config;
-        this.resourceFinder = resourceFinder;
+        super(config, resourceFinder);
     }
 
     @Override

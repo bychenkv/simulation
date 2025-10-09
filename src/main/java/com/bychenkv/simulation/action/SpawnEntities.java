@@ -11,6 +11,7 @@ public class SpawnEntities<T extends Entity> extends Action {
     private final Class<T> entityType;
     private final int targetCount;
     private final Supplier<T> entityFactory;
+
     private final Random random = new Random();
 
     public SpawnEntities(Class<T> entityType, int targetCount, Supplier<T> entityFactory) {
