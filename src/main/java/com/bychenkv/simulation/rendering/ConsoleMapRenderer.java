@@ -5,6 +5,7 @@ import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
 
+import java.io.Console;
 import java.io.PrintStream;
 
 public class ConsoleMapRenderer implements MapRenderer {

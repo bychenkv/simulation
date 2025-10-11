@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.utils;
+package com.bychenkv.simulation.services.finder;
 
 import com.bychenkv.simulation.map.Position;
 

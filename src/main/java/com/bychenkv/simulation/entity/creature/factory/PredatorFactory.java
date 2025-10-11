@@ -2,7 +2,7 @@ package com.bychenkv.simulation.entity.creature.factory;
 
 import com.bychenkv.simulation.config.PredatorConfig;
 import com.bychenkv.simulation.entity.creature.Predator;
-import com.bychenkv.simulation.utils.ResourceFinder;
+import com.bychenkv.simulation.services.finder.ResourceFinder;
 
 public class PredatorFactory extends CreatureFactory<Predator, PredatorConfig> {
     public PredatorFactory(PredatorConfig config, ResourceFinder resourceFinder) {

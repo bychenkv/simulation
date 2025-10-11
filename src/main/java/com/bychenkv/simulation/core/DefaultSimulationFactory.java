@@ -19,8 +19,8 @@ import com.bychenkv.simulation.rendering.ConsoleEntityRenderer;
 import com.bychenkv.simulation.rendering.ConsoleMapRenderer;
 import com.bychenkv.simulation.rendering.EntityRenderer;
 import com.bychenkv.simulation.rendering.MapRenderer;
-import com.bychenkv.simulation.utils.BfsResourceFinder;
-import com.bychenkv.simulation.utils.ResourceFinder;
+import com.bychenkv.simulation.services.finder.BfsResourceFinder;
+import com.bychenkv.simulation.services.finder.ResourceFinder;
 
 import java.util.List;
 import java.util.function.Supplier;

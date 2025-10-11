@@ -1,10 +1,10 @@
 package com.bychenkv.simulation.entity.creature;
 
-import com.bychenkv.simulation.utils.Path;
+import com.bychenkv.simulation.services.finder.Path;
 import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
-import com.bychenkv.simulation.utils.ResourceFinder;
+import com.bychenkv.simulation.services.finder.ResourceFinder;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -24,7 +24,7 @@ public abstract class Creature extends Entity {
     }
 
     public void makeMove(SimulationMap map, Position currentPosition) {
-        System.out.println(this + " at " + currentPosition + " make a move");
+        // System.out.println(this + " at " + currentPosition + " make a move");
 
         Path path = resourceFinder.findPath(currentPosition, this::canConsume);
 
@@ -74,6 +74,6 @@ public abstract class Creature extends Entity {
         map.removeEntityAt(currentPosition);
         map.addEntity(nextPosition, this);
 
-        System.out.println(this + " has moved from " + currentPosition + " to " + nextPosition);
+        // System.out.println(this + " has moved from " + currentPosition + " to " + nextPosition);
     }
 }
