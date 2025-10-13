@@ -13,12 +13,8 @@ import com.bychenkv.simulation.entity.creature.factory.PredatorFactory;
 import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.entity.object.Rock;
 import com.bychenkv.simulation.entity.object.Tree;
-import com.bychenkv.simulation.map.MapBounds;
 import com.bychenkv.simulation.map.SimulationMap;
-import com.bychenkv.simulation.rendering.ConsoleEntityRenderer;
-import com.bychenkv.simulation.rendering.ConsoleMapRenderer;
-import com.bychenkv.simulation.rendering.EntityRenderer;
-import com.bychenkv.simulation.rendering.MapRenderer;
+import com.bychenkv.simulation.rendering.*;
 import com.bychenkv.simulation.services.finder.BfsResourceFinder;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
 
@@ -26,16 +22,19 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class DefaultSimulationFactory implements SimulationFactory {
-    private final SimulationConfig simulationConfig;
+    private final SimulationConfig config;
+    private final MapRendererFactory rendererFactory;
 
-    public DefaultSimulationFactory(SimulationConfig simulationConfig) {
-        this.simulationConfig = simulationConfig;
+    public DefaultSimulationFactory(SimulationConfig config,
+                                    MapRendererFactory rendererFactory) {
+        this.config = config;
+        this.rendererFactory = rendererFactory;
     }
 
     @Override
     public Simulation createSimulation() {
-        SimulationMap map = createMap();
-        MapRenderer mapRenderer = createMapRenderer(map);
+        SimulationMap map = new SimulationMap(config.mapBounds());
+        MapRenderer mapRenderer = rendererFactory.createMapRenderer(map);
 
         ResourceFinder resourceFinder = new BfsResourceFinder(map);
         SimulationActions actions = createActions(resourceFinder);
@@ -43,19 +42,9 @@ public class DefaultSimulationFactory implements SimulationFactory {
         return new Simulation(map, mapRenderer, actions);
     }
 
-    private SimulationMap createMap() {
-        MapBounds mapBounds = simulationConfig.mapBounds();
-        return new SimulationMap(mapBounds);
-    }
-
-    private MapRenderer createMapRenderer(SimulationMap map) {
-        EntityRenderer entityRenderer = new ConsoleEntityRenderer();
-        return new ConsoleMapRenderer(map, System.out, entityRenderer);
-    }
-
     private SimulationActions createActions(ResourceFinder resourceFinder) {
-        EntitySpawnConfig spawn = simulationConfig.spawn();
-        CreaturesConfig creatures = simulationConfig.creatures();
+        EntitySpawnConfig spawn = config.spawn();
+        CreaturesConfig creatures = config.creatures();
 
         HerbivoreFactory herbivoreFactory = new HerbivoreFactory(
                 creatures.herbivore(),
