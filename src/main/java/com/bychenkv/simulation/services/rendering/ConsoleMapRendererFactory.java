@@ -1,9 +1,7 @@
-package com.bychenkv.simulation.rendering;
+package com.bychenkv.simulation.services.rendering;
 
 import com.bychenkv.simulation.map.SimulationMap;
 import org.jline.terminal.Terminal;
-
-import java.io.PrintWriter;
 
 public class ConsoleMapRendererFactory implements MapRendererFactory {
     private final Terminal terminal;
@@ -14,9 +12,8 @@ public class ConsoleMapRendererFactory implements MapRendererFactory {
 
     @Override
     public MapRenderer createMapRenderer(SimulationMap map) {
-        PrintWriter writer = terminal.writer();
         EntityRenderer entityRenderer = new ConsoleEntityRenderer();
 
-        return new ConsoleMapRenderer(map, writer, entityRenderer);
+        return new ConsoleMapRenderer(map, entityRenderer);
     }
 }

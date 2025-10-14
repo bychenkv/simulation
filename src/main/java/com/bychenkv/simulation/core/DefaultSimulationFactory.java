@@ -14,9 +14,11 @@ import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.entity.object.Rock;
 import com.bychenkv.simulation.entity.object.Tree;
 import com.bychenkv.simulation.map.SimulationMap;
-import com.bychenkv.simulation.rendering.*;
 import com.bychenkv.simulation.services.finder.BfsResourceFinder;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
+import com.bychenkv.simulation.services.rendering.MapRenderer;
+import com.bychenkv.simulation.services.rendering.MapRendererFactory;
+import com.bychenkv.simulation.ui.SimulationUi;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -24,11 +26,14 @@ import java.util.function.Supplier;
 public class DefaultSimulationFactory implements SimulationFactory {
     private final SimulationConfig config;
     private final MapRendererFactory rendererFactory;
+    private final SimulationUi ui;
 
     public DefaultSimulationFactory(SimulationConfig config,
-                                    MapRendererFactory rendererFactory) {
+                                    MapRendererFactory rendererFactory,
+                                    SimulationUi ui) {
         this.config = config;
         this.rendererFactory = rendererFactory;
+        this.ui = ui;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class DefaultSimulationFactory implements SimulationFactory {
         ResourceFinder resourceFinder = new BfsResourceFinder(map);
         SimulationActions actions = createActions(resourceFinder);
 
-        return new Simulation(map, mapRenderer, actions);
+        return new Simulation(map, mapRenderer, actions, ui);
     }
 
     private SimulationActions createActions(ResourceFinder resourceFinder) {

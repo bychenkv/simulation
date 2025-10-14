@@ -2,7 +2,8 @@ package com.bychenkv.simulation.core;
 
 import com.bychenkv.simulation.action.Action;
 import com.bychenkv.simulation.map.SimulationMap;
-import com.bychenkv.simulation.rendering.MapRenderer;
+import com.bychenkv.simulation.services.rendering.MapRenderer;
+import com.bychenkv.simulation.ui.SimulationUi;
 
 public class Simulation {
     private static final long ITERATION_DELAY_MS = 500;
@@ -10,6 +11,7 @@ public class Simulation {
     private final SimulationMap map;
     private final MapRenderer mapRenderer;
     private final SimulationActions actions;
+    private final SimulationUi ui;
 
     private int iterationCount;
     private volatile boolean isRunning;
@@ -18,15 +20,17 @@ public class Simulation {
     public Simulation(
             SimulationMap map,
             MapRenderer mapRenderer,
-            SimulationActions actions
+            SimulationActions actions,
+            SimulationUi ui
     ) {
         this.map = map;
         this.mapRenderer = mapRenderer;
         this.actions = actions;
+        this.ui = ui;
     }
 
     public void start() {
-        System.out.println("Simulation started");
+        ui.log("Simulation started");
         try {
             initializeSimulation();
 
@@ -41,7 +45,7 @@ public class Simulation {
     }
 
     private void initializeSimulation() {
-        System.out.println("Initialize simulation...");
+        ui.log("Initialize simulation...");
 
         isRunning = true;
         isPaused = false;
@@ -53,12 +57,9 @@ public class Simulation {
     }
 
     private void executeIteration() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-
-        System.out.format("Iteration #%d%n", ++iterationCount);
-        mapRenderer.render();
-        System.out.println("Press Enter to pause/resume, 'q' + Enter to quit");
+        String rendered = mapRenderer.render();
+        iterationCount++;
+        ui.update(rendered, iterationCount, isPaused);
 
         for (Action action : actions.turn()) {
             if (isRunning && !isPaused) {
@@ -75,18 +76,18 @@ public class Simulation {
     }
 
     public synchronized void pause() {
-        System.out.println("Simulation paused");
+        ui.log("Simulation paused");
         isPaused = true;
     }
 
     public synchronized void resume() {
-        System.out.println("Simulation resumed");
+        ui.log("Simulation resumed");
         isPaused = false;
         notifyAll();
     }
 
     public synchronized void stop() {
-        System.out.println("Simulation stopped");
+        ui.log("Simulation stopped");
         isRunning = false;
         isPaused = false;
         notifyAll();

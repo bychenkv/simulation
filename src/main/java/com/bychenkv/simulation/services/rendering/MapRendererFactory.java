@@ -1,4 +1,4 @@
-package com.bychenkv.simulation.rendering;
+package com.bychenkv.simulation.services.rendering;
 
 import com.bychenkv.simulation.map.SimulationMap;
 

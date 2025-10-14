@@ -1,11 +1,9 @@
-package com.bychenkv.simulation.rendering;
+package com.bychenkv.simulation.services.rendering;
 
 import com.bychenkv.simulation.map.MapBounds;
 import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
-
-import java.io.PrintWriter;
 
 public class ConsoleMapRenderer implements MapRenderer {
     private static final int CELL_WIDTH = 5;
@@ -15,18 +13,18 @@ public class ConsoleMapRenderer implements MapRenderer {
     private static final String EMPTY_CELL = " ";
 
     private final SimulationMap map;
-    private final PrintWriter writer;
     private final EntityRenderer entityRenderer;
+    private StringBuilder rendered;
 
     public ConsoleMapRenderer(SimulationMap map,
-                              PrintWriter writer,
                               EntityRenderer entityRenderer) {
         this.map = map;
-        this.writer = writer;
         this.entityRenderer = entityRenderer;
+        this.rendered = new StringBuilder();
     }
 
-    public void render() {
+    public String render() {
+        rendered = new StringBuilder();
         MapBounds bounds = map.getBounds();
 
         for (int row = 0; row <= bounds.height(); row++) {
@@ -35,17 +33,20 @@ public class ConsoleMapRenderer implements MapRenderer {
             }
             printHorizontalBorderLine();
         }
+
+        return rendered.toString();
     }
 
     private void printHorizontalBorderLine() {
         String borderLineSegment = HORIZONTAL_BORDER.repeat(CELL_WIDTH) + CELL_BORDER;
         String horizontalBorderLine = borderLineSegment.repeat(map.getBounds().width() + 1);
-        writer.format("\n%s\n", horizontalBorderLine);
+        rendered.append(String.format("\n%s\n", horizontalBorderLine));
     }
 
     private void printCell(int row, int column) {
         String content = getCellContent(row, column);
-        writer.print(getPaddedContent(content) + VERTICAL_BORDER);
+        rendered.append(getPaddedContent(content))
+                .append(VERTICAL_BORDER);
     }
 
     private String getCellContent(int row, int column) {
