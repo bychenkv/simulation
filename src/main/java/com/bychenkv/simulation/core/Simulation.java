@@ -11,7 +11,7 @@ public class Simulation {
     private final SimulationMap map;
     private final MapRenderer mapRenderer;
     private final SimulationActions actions;
-    private final SimulationUi ui;
+    private final SimulationEventBus eventBus;
 
     private int iterationCount;
     private volatile boolean isRunning;
@@ -26,11 +26,13 @@ public class Simulation {
         this.map = map;
         this.mapRenderer = mapRenderer;
         this.actions = actions;
-        this.ui = ui;
+
+        eventBus = new SimulationEventBus();
+        eventBus.addListener(ui);
     }
 
     public void start() {
-        ui.log("Simulation started");
+        //ui.log("Simulation started");
         try {
             initializeSimulation();
 
@@ -45,7 +47,7 @@ public class Simulation {
     }
 
     private void initializeSimulation() {
-        ui.log("Initialize simulation...");
+        //ui.log("Initialize simulation...");
 
         isRunning = true;
         isPaused = false;
@@ -57,9 +59,9 @@ public class Simulation {
     }
 
     private void executeIteration() {
-        String rendered = mapRenderer.render();
         iterationCount++;
-        ui.update(rendered, iterationCount, isPaused);
+        String renderedMap = mapRenderer.render();
+        eventBus.notifyIterationCompleted(iterationCount, renderedMap);
 
         for (Action action : actions.turn()) {
             if (isRunning && !isPaused) {
@@ -76,20 +78,23 @@ public class Simulation {
     }
 
     public synchronized void pause() {
-        ui.log("Simulation paused");
+        //ui.log("Simulation paused");
         isPaused = true;
+        eventBus.notifyStatusChanged(SimulationStatus.PAUSED);
     }
 
     public synchronized void resume() {
-        ui.log("Simulation resumed");
+        //ui.log("Simulation resumed");
         isPaused = false;
+        eventBus.notifyStatusChanged(SimulationStatus.RUNNING);
         notifyAll();
     }
 
     public synchronized void stop() {
-        ui.log("Simulation stopped");
+        //ui.log("Simulation stopped");
         isRunning = false;
         isPaused = false;
+        eventBus.notifyStatusChanged(SimulationStatus.STOPPED);
         notifyAll();
     }
 

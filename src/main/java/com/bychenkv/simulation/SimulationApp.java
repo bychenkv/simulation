@@ -3,8 +3,11 @@ package com.bychenkv.simulation;
 import com.bychenkv.simulation.config.SimulationConfig;
 import com.bychenkv.simulation.core.*;
 import com.bychenkv.simulation.services.rendering.ConsoleMapRendererFactory;
+import com.bychenkv.simulation.services.rendering.MapRenderer;
 import com.bychenkv.simulation.services.rendering.MapRendererFactory;
+import com.bychenkv.simulation.ui.InputEventBus;
 import com.bychenkv.simulation.ui.SimulationUi;
+import com.bychenkv.simulation.ui.TerminalDisplay;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
@@ -19,12 +22,16 @@ public class SimulationApp {
             throw new RuntimeException(e);
         }
 
-        SimulationConfig config = SimulationConfig.withDefaults();
-        MapRendererFactory rendererFactory = new ConsoleMapRendererFactory(terminal);
+        SimulationUi ui = new SimulationUi(
+                new TerminalDisplay(terminal),
+                new InputEventBus(terminal.reader())
+        );
 
-        SimulationUi ui = new SimulationUi(terminal);
-        Simulation simulation = new DefaultSimulationFactory(config, rendererFactory, ui)
-                .createSimulation();
+        Simulation simulation = new DefaultSimulationFactory(
+                SimulationConfig.withDefaults(),
+                new ConsoleMapRendererFactory(),
+                ui
+        ).createSimulation();
 
         SimulationLauncher launcher = new SimulationLauncher(simulation, ui);
         launcher.launch();

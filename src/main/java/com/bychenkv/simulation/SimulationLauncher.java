@@ -2,10 +2,10 @@ package com.bychenkv.simulation;
 
 import com.bychenkv.simulation.core.Simulation;
 import com.bychenkv.simulation.ui.SimulationUi;
-import com.bychenkv.simulation.ui.UiEvent;
-import com.bychenkv.simulation.ui.UiEventListener;
+import com.bychenkv.simulation.ui.UiCommandListener;
+import com.bychenkv.simulation.ui.UiCommand;
 
-public class SimulationLauncher implements UiEventListener {
+public class SimulationLauncher implements UiCommandListener {
     private static final int SIMULATION_THREAD_JOIN_TIMEOUT_MS = 1000;
     private static final String SIMULATION_THREAD_NAME = "SimulationThread";
 
@@ -19,17 +19,16 @@ public class SimulationLauncher implements UiEventListener {
 
         this.ui = ui;
         this.ui.addEventListener(this);
-
     }
 
     public void launch() {
         simulationThread.start();
-        ui.startInputListening();
+        ui.start();
     }
 
     @Override
-    public void onUiEventReceived(UiEvent event) {
-        switch (event) {
+    public void onCommandReceived(UiCommand command) {
+        switch (command) {
             case STOP -> stop();
             case TOGGLE_PAUSE -> togglePause();
         }
@@ -44,7 +43,8 @@ public class SimulationLauncher implements UiEventListener {
     }
 
     private void stop() {
-        ui.stopInputListening();
+        ui.removeEventListener(this);
+        ui.close();
         simulation.stop();
 
         if (simulationThread != null && simulationThread.isAlive()) {
