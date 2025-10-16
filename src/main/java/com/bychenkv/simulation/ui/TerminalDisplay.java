@@ -3,6 +3,7 @@ package com.bychenkv.simulation.ui;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
+import org.jline.utils.InfoCmp;
 
 import java.io.PrintWriter;
 
@@ -15,17 +16,22 @@ public class TerminalDisplay {
         this.writer = terminal.writer();
     }
 
+    public void moveCursorTo(int row, int col) {
+        terminal.puts(InfoCmp.Capability.cursor_address, row, col);
+        terminal.flush();
+    }
+
+    public void clearLine(int lineNum) {
+        moveCursorTo(lineNum, 0);
+
+        terminal.puts(InfoCmp.Capability.carriage_return);
+        terminal.puts(InfoCmp.Capability.clr_eol);
+        terminal.flush();
+    }
+
     public void clear() {
         writer.print("\033[H\033[2J");
         writer.flush();
-    }
-
-    public void flush() {
-        writer.flush();
-    }
-
-    public void moveCursorHome() {
-        writer.print("\033[H");
     }
 
     public void printWithStyle(String text, AttributedStyle style) {
@@ -36,7 +42,17 @@ public class TerminalDisplay {
         writer.println(text);
     }
 
-    public void clearToEndOfScreen() {
-        writer.print("\033[J");
+    public void flush() {
+        writer.flush();
+    }
+
+    public void hideCursor() {
+        writer.print("\033[?25l");
+        writer.flush();
+    }
+
+    public void showCursor() {
+        writer.print("\033[?25h");
+        writer.flush();
     }
 }

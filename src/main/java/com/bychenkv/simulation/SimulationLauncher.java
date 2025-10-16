@@ -22,8 +22,8 @@ public class SimulationLauncher implements UiCommandListener {
     }
 
     public void launch() {
-        simulationThread.start();
         ui.start();
+        simulationThread.start();
     }
 
     @Override

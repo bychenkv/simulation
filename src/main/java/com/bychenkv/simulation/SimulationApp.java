@@ -3,8 +3,6 @@ package com.bychenkv.simulation;
 import com.bychenkv.simulation.config.SimulationConfig;
 import com.bychenkv.simulation.core.*;
 import com.bychenkv.simulation.services.rendering.ConsoleMapRendererFactory;
-import com.bychenkv.simulation.services.rendering.MapRenderer;
-import com.bychenkv.simulation.services.rendering.MapRendererFactory;
 import com.bychenkv.simulation.ui.InputEventBus;
 import com.bychenkv.simulation.ui.SimulationUi;
 import com.bychenkv.simulation.ui.TerminalDisplay;
@@ -22,25 +20,29 @@ public class SimulationApp {
             throw new RuntimeException(e);
         }
 
+        SimulationConfig config = SimulationConfig.withDefaults();
+
         SimulationUi ui = new SimulationUi(
                 new TerminalDisplay(terminal),
-                new InputEventBus(terminal.reader())
+                new InputEventBus(terminal.reader()),
+                config.mapBounds().height()
         );
 
-        Simulation simulation = new DefaultSimulationFactory(
-                SimulationConfig.withDefaults(),
-                new ConsoleMapRendererFactory(),
-                ui
-        ).createSimulation();
+        Simulation simulation = new DefaultSimulationFactory(config, new ConsoleMapRendererFactory(), ui)
+                .createSimulation();
 
         SimulationLauncher launcher = new SimulationLauncher(simulation, ui);
         launcher.launch();
     }
 
     private static Terminal createTerminal() throws IOException {
-        return TerminalBuilder.builder()
+        Terminal terminal = TerminalBuilder.builder()
                 .system(true)
                 .encoding("UTF-8")
                 .build();
+
+        terminal.enterRawMode();
+
+        return terminal;
     }
 }

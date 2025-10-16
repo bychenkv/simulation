@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class CommandsSection extends UiSection {
     private static final String COMMANDS_TEXT_DELIMITER = " | ";
     private static final String COMMANDS_TEXT_PREFIX = "Commands: ";
+    private static final int HEIGHT = 1;
 
     private final UiCommand[] commands = UiCommand.values();
 
@@ -17,7 +18,15 @@ public class CommandsSection extends UiSection {
         super(display);
     }
 
-    public void render() {
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
+    public void renderAt(int startRow) {
+        display.clearLine(startRow);
+
         String commandsText = Arrays.stream(commands)
                 .map(cmd -> String.format("[%s] %s", cmd.getKey(), cmd.getDescription()))
                 .collect(Collectors.joining(COMMANDS_TEXT_DELIMITER, COMMANDS_TEXT_PREFIX, "\n"));

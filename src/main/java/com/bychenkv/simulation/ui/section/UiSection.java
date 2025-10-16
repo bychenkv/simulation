@@ -8,4 +8,8 @@ public abstract class UiSection {
     public UiSection(TerminalDisplay display) {
         this.display = display;
     }
+
+    public abstract int getHeight();
+
+    public abstract void renderAt(int startRow);
 }

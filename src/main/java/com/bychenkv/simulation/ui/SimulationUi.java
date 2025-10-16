@@ -9,6 +9,7 @@ import java.io.Closeable;
 public class SimulationUi implements SimulationEventListener, Closeable {
     private final InputEventBus eventBus;
     private final TerminalDisplay display;
+    private final UiLayout layout;
 
     private final HeaderSection headerSection;
     private final MapSection mapSection;
@@ -16,38 +17,49 @@ public class SimulationUi implements SimulationEventListener, Closeable {
     private final CommandsSection commandsSection;
     private final IterationSection iterationSection;
 
-    public SimulationUi(TerminalDisplay display, InputEventBus eventBus) {
+    public SimulationUi(TerminalDisplay display, InputEventBus eventBus, int mapHeight) {
         this.display = display;
         this.eventBus = eventBus;
+        layout = new UiLayout(display);
 
         headerSection = new HeaderSection(display);
-        mapSection = new MapSection(display);
+        mapSection = new MapSection(display, mapHeight);
         statusSection = new StatusSection(display);
         commandsSection = new CommandsSection(display);
         iterationSection = new IterationSection(display);
+
+        layout.addSection(headerSection);
+        layout.addSection(iterationSection);
+        layout.addSection(mapSection);
+        layout.addSection(statusSection);
+        layout.addSection(commandsSection);
     }
 
     public void start() {
         eventBus.startListening();
-
         display.clear();
-        headerSection.render();
-        commandsSection.render();
+        display.hideCursor();
+        layout.renderAllSections();
     }
 
     @Override
     public void onIterationCompleted(int iteration, String renderedMap) {
-        iterationSection.render(iteration);
-        mapSection.render(renderedMap);
+        iterationSection.setCurrentIteration(iteration);
+        mapSection.setCurrentRenderedMap(renderedMap);
+
+        layout.renderSection(iterationSection);
+        layout.renderSection(mapSection);
     }
 
     @Override
     public void onStatusChanged(SimulationStatus status) {
-        statusSection.render(status);
+        statusSection.setCurrentStatus(status);
+        layout.renderSection(statusSection);
     }
 
     @Override
     public void close() {
+        display.showCursor();
         eventBus.close();
     }
 
