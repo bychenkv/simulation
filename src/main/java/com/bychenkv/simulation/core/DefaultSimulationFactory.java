@@ -13,51 +13,56 @@ import com.bychenkv.simulation.entity.creature.factory.PredatorFactory;
 import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.entity.object.Rock;
 import com.bychenkv.simulation.entity.object.Tree;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
 import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.services.finder.BfsResourceFinder;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
-import com.bychenkv.simulation.services.rendering.MapRenderer;
-import com.bychenkv.simulation.services.rendering.MapRendererFactory;
-import com.bychenkv.simulation.ui.SimulationUi;
+import com.bychenkv.simulation.services.rendering.*;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class DefaultSimulationFactory implements SimulationFactory {
     private final SimulationConfig config;
-    private final MapRendererFactory rendererFactory;
-    private final SimulationUi ui;
+    private final SimulationEventBus eventBus;
+    private final SimulationLogger logger;
 
     public DefaultSimulationFactory(SimulationConfig config,
-                                    MapRendererFactory rendererFactory,
-                                    SimulationUi ui) {
+                                    SimulationEventBus eventBus,
+                                    SimulationLogger logger) {
         this.config = config;
-        this.rendererFactory = rendererFactory;
-        this.ui = ui;
+        this.eventBus = eventBus;
+        this.logger = logger;
     }
 
     @Override
     public Simulation createSimulation() {
         SimulationMap map = new SimulationMap(config.mapBounds());
-        MapRenderer mapRenderer = rendererFactory.createMapRenderer(map);
+
+        EntityRenderer entityRenderer = new ConsoleEntityRenderer();
+        MapRenderer mapRenderer = new ConsoleMapRenderer(map, entityRenderer);
 
         ResourceFinder resourceFinder = new BfsResourceFinder(map);
-        SimulationActions actions = createActions(resourceFinder);
+        SimulationActions actions = createActions(resourceFinder, mapRenderer);
 
-        return new Simulation(map, mapRenderer, actions, ui);
+        SimulationContext context = new SimulationContext(map);
+
+        return new Simulation(mapRenderer, actions, eventBus, logger, context);
     }
 
-    private SimulationActions createActions(ResourceFinder resourceFinder) {
+    private SimulationActions createActions(ResourceFinder resourceFinder, MapRenderer mapRenderer) {
         EntitySpawnConfig spawn = config.spawn();
         CreaturesConfig creatures = config.creatures();
 
         HerbivoreFactory herbivoreFactory = new HerbivoreFactory(
                 creatures.herbivore(),
-                resourceFinder
+                resourceFinder,
+                logger
         );
         PredatorFactory predatorFactory = new PredatorFactory(
                 creatures.predator(),
-                resourceFinder
+                resourceFinder,
+                logger
         );
 
         List<Action> initActions = List.of(
@@ -69,7 +74,7 @@ public class DefaultSimulationFactory implements SimulationFactory {
         );
 
         List<Action> turnActions = List.of(
-                new MoveCreatures(),
+                new MoveCreatures(mapRenderer, eventBus),
                 spawnEntities(Grass.class, spawn.grass(), Grass::new),
                 spawnEntities(Herbivore.class, spawn.herbivores(), herbivoreFactory::create)
         );

@@ -7,14 +7,14 @@ import org.jline.utils.AttributedStyle;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class CommandsSection extends UiSection {
+public class CommandSection extends UiSection {
     private static final String COMMANDS_TEXT_DELIMITER = " | ";
     private static final String COMMANDS_TEXT_PREFIX = "Commands: ";
     private static final int HEIGHT = 1;
 
     private final UiCommand[] commands = UiCommand.values();
 
-    public CommandsSection(TerminalDisplay display) {
+    public CommandSection(TerminalDisplay display) {
         super(display);
     }
 

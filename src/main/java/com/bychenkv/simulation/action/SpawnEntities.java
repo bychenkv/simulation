@@ -1,5 +1,6 @@
 package com.bychenkv.simulation.action;
 
+import com.bychenkv.simulation.core.SimulationContext;
 import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.map.SimulationMap;
@@ -21,7 +22,9 @@ public class SpawnEntities<T extends Entity> extends Action {
     }
 
     @Override
-    public void execute(SimulationMap map) {
+    public void execute(SimulationContext context) {
+        SimulationMap map = context.getMap();
+
         int existingCount = map.getEntitiesOfType(entityType).size();
         int missingCount = targetCount - existingCount;
 

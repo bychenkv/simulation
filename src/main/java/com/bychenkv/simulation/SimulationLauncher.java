@@ -43,9 +43,10 @@ public class SimulationLauncher implements UiCommandListener {
     }
 
     private void stop() {
+        simulation.stop();
+
         ui.removeEventListener(this);
         ui.close();
-        simulation.stop();
 
         if (simulationThread != null && simulationThread.isAlive()) {
             simulationThread.interrupt();

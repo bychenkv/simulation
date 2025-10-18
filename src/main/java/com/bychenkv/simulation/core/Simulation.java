@@ -1,46 +1,44 @@
 package com.bychenkv.simulation.core;
 
 import com.bychenkv.simulation.action.Action;
-import com.bychenkv.simulation.map.SimulationMap;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
 import com.bychenkv.simulation.services.rendering.MapRenderer;
-import com.bychenkv.simulation.ui.SimulationUi;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class Simulation {
     private static final long ITERATION_DELAY_MS = 500;
 
-    private final SimulationMap map;
     private final MapRenderer mapRenderer;
     private final SimulationActions actions;
-    private final SimulationEventBus eventBus = new SimulationEventBus();
+    private final SimulationEventBus eventBus;
+    private final SimulationLogger logger;
 
-    private int iterationCount;
-    private final AtomicReference<SimulationStatus> status =
-            new AtomicReference<>(SimulationStatus.STOPPED);
+    private final SimulationContext context;
 
-    public Simulation(
-            SimulationMap map,
-            MapRenderer mapRenderer,
-            SimulationActions actions,
-            SimulationUi ui
-    ) {
-        this.map = map;
+    public Simulation(MapRenderer mapRenderer,
+                      SimulationActions actions,
+                      SimulationEventBus eventBus,
+                      SimulationLogger logger,
+                      SimulationContext context) {
         this.mapRenderer = mapRenderer;
         this.actions = actions;
-
-        eventBus.addListener(ui);
+        this.eventBus = eventBus;
+        this.logger = logger;
+        this.context = context;
     }
 
     public void start() {
-        //ui.log("Simulation started");
+        logger.info("Simulation starting...");
+
         try {
             initializeSimulation();
 
-            while (status.get() != SimulationStatus.STOPPED) {
-                if (!waitIfPaused()) break;
+            while (!context.isStopped()) {
+                if (!waitIfPaused()) {
+                    break;
+                }
                 executeIteration();
-                Thread.sleep(ITERATION_DELAY_MS);
+                //noinspection BusyWait
+                 Thread.sleep(ITERATION_DELAY_MS);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -48,58 +46,57 @@ public class Simulation {
     }
 
     private void initializeSimulation() {
-        //ui.log("Initialize simulation...");
+        logger.info("Initializing simulation...");
 
         updateStatus(SimulationStatus.RUNNING);
-        iterationCount = 0;
+        context.resetIterationCount();
 
         for (Action action : actions.init()) {
-            action.execute(map);
+            action.execute(context);
         }
     }
 
     private void executeIteration() {
-        iterationCount++;
+        int currentIteration = context.incrementIterationCount();
         String renderedMap = mapRenderer.render();
-        eventBus.notifyIterationCompleted(iterationCount, renderedMap);
+
+        eventBus.notifyIterationCompleted(currentIteration, renderedMap);
 
         for (Action action : actions.turn()) {
-            if (status.get() == SimulationStatus.RUNNING) {
-                action.execute(map);
+            if (context.isRunning()) {
+                action.execute(context);
             }
         }
     }
 
     private synchronized boolean waitIfPaused() throws InterruptedException {
-        while (status.get() == SimulationStatus.PAUSED) {
-            wait();
-        }
-        return status.get() != SimulationStatus.STOPPED;
+        context.waitIfPaused();
+        return !context.isStopped();
     }
 
     public synchronized void pause() {
-        //ui.log("Simulation paused");
         updateStatus(SimulationStatus.PAUSED);
+        logger.info("Simulation paused");
     }
 
     public synchronized void resume() {
-        //ui.log("Simulation resumed");
         updateStatus(SimulationStatus.RUNNING);
-        notifyAll();
+        logger.info("Simulation resumed");
+        context.notifyResumed();
     }
 
     public synchronized void stop() {
-        //ui.log("Simulation stopped");
         updateStatus(SimulationStatus.STOPPED);
-        notifyAll();
+        logger.info("Simulation stopping...");
+        context.notifyResumed();
     }
 
     public boolean isPaused() {
-        return status.get() == SimulationStatus.PAUSED;
+        return context.isPaused();
     }
 
     private void updateStatus(SimulationStatus newStatus) {
-        status.set(newStatus);
+        context.setStatus(newStatus);
         eventBus.notifyStatusChanged(newStatus);
     }
 }

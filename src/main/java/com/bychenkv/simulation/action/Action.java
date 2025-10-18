@@ -1,7 +1,7 @@
 package com.bychenkv.simulation.action;
 
-import com.bychenkv.simulation.map.SimulationMap;
+import com.bychenkv.simulation.core.SimulationContext;
 
 public abstract class Action {
-    public abstract void execute(SimulationMap map);
+    public abstract void execute(SimulationContext context);
 }

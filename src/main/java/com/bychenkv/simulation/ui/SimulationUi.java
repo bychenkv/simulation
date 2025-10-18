@@ -2,37 +2,48 @@ package com.bychenkv.simulation.ui;
 
 import com.bychenkv.simulation.core.SimulationEventListener;
 import com.bychenkv.simulation.core.SimulationStatus;
+import com.bychenkv.simulation.services.logger.LogMessage;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
 import com.bychenkv.simulation.ui.section.*;
 
 import java.io.Closeable;
 
-public class SimulationUi implements SimulationEventListener, Closeable {
+public class SimulationUi implements SimulationEventListener,
+                                     SimulationLogger.Listener,
+                                     Closeable {
     private final InputEventBus eventBus;
     private final TerminalDisplay display;
+    private final SimulationLogger logger;
     private final UiLayout layout;
 
-    private final HeaderSection headerSection;
+    // SECTIONS
+
+    private final IterationSection iterationSection;
     private final MapSection mapSection;
     private final StatusSection statusSection;
-    private final CommandsSection commandsSection;
-    private final IterationSection iterationSection;
+    private final LogSection logSection;
 
-    public SimulationUi(TerminalDisplay display, InputEventBus eventBus, int mapHeight) {
+    public SimulationUi(TerminalDisplay display,
+                        InputEventBus eventBus,
+                        int mapHeight,
+                        SimulationLogger logger) {
         this.display = display;
         this.eventBus = eventBus;
-        layout = new UiLayout(display);
+        this.logger = logger;
+        this.logger.addListener(this);
 
-        headerSection = new HeaderSection(display);
+        iterationSection = new IterationSection(display);
         mapSection = new MapSection(display, mapHeight);
         statusSection = new StatusSection(display);
-        commandsSection = new CommandsSection(display);
-        iterationSection = new IterationSection(display);
+        logSection = new LogSection(display);
 
-        layout.addSection(headerSection);
+        layout = new UiLayout(display);
+        layout.addSection(new HeaderSection(display));
         layout.addSection(iterationSection);
         layout.addSection(mapSection);
         layout.addSection(statusSection);
-        layout.addSection(commandsSection);
+        layout.addSection(logSection);
+        layout.addSection(new CommandSection(display));
     }
 
     public void start() {
@@ -45,9 +56,9 @@ public class SimulationUi implements SimulationEventListener, Closeable {
     @Override
     public void onIterationCompleted(int iteration, String renderedMap) {
         iterationSection.setCurrentIteration(iteration);
-        mapSection.setCurrentRenderedMap(renderedMap);
-
         layout.renderSection(iterationSection);
+
+        mapSection.setCurrentRenderedMap(renderedMap);
         layout.renderSection(mapSection);
     }
 
@@ -58,9 +69,24 @@ public class SimulationUi implements SimulationEventListener, Closeable {
     }
 
     @Override
+    public void onLogMessage(LogMessage message) {
+        logSection.addLog(message);
+        layout.renderSection(logSection);
+    }
+
+    @Override
+    public void onMapRendered(String renderedMap) {
+        mapSection.setCurrentRenderedMap(renderedMap);
+        layout.renderSection(mapSection);
+    }
+
+    @Override
     public void close() {
-        display.showCursor();
         eventBus.close();
+        logger.removeListener(this);
+
+        display.showCursor();
+        display.clear();
     }
 
     public void addEventListener(UiCommandListener listener) {

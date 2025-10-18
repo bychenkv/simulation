@@ -5,10 +5,15 @@ import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.entity.object.Grass;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
 
 public class Herbivore extends Creature {
-    public Herbivore(int maxHp, int speed, int hpRestoreRate, ResourceFinder resourceFinder) {
-        super(maxHp, speed, resourceFinder);
+    public Herbivore(int maxHp,
+                     int speed,
+                     int hpRestoreRate,
+                     ResourceFinder resourceFinder,
+                     SimulationLogger logger) {
+        super(maxHp, speed, resourceFinder, logger);
         this.hpRestoreRate = hpRestoreRate;
     }
 
@@ -28,8 +33,7 @@ public class Herbivore extends Creature {
     @Override
     protected void consumeResourceAt(SimulationMap map, Position resourcePosition) {
         Grass grass = (Grass) map.getEntityAt(resourcePosition);
-        // System.out.println(this + " meet " + grass + " on " + resourcePosition + " and eat it");
-
+        logger.info(this + " found " + grass + " on " + resourcePosition + " and eat it");
         map.removeEntityAt(resourcePosition);
     }
 

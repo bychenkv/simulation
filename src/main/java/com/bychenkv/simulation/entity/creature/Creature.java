@@ -5,27 +5,29 @@ import com.bychenkv.simulation.map.Position;
 import com.bychenkv.simulation.map.SimulationMap;
 import com.bychenkv.simulation.entity.Entity;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
+
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Creature extends Entity {
     private final ResourceFinder resourceFinder;
+    protected final SimulationLogger logger;
 
     protected final int speed;
     protected final int maxHp;
     protected int currentHp;
     protected int hpRestoreRate;
 
-    public Creature(int maxHp, int speed, ResourceFinder resourceFinder) {
+    public Creature(int maxHp, int speed, ResourceFinder resourceFinder, SimulationLogger logger) {
         this.resourceFinder = resourceFinder;
+        this.logger = logger;
         this.maxHp = maxHp;
         this.speed = speed;
         currentHp = maxHp;
     }
 
     public void makeMove(SimulationMap map, Position currentPosition) {
-        // System.out.println(this + " at " + currentPosition + " make a move");
-
         Path path = resourceFinder.findPath(currentPosition, this::canConsume);
 
         switch (path.getLength()) {
@@ -74,6 +76,6 @@ public abstract class Creature extends Entity {
         map.removeEntityAt(currentPosition);
         map.addEntity(nextPosition, this);
 
-        // System.out.println(this + " has moved from " + currentPosition + " to " + nextPosition);
+        logger.info(this + " has moved from " + currentPosition + " to " + nextPosition);
     }
 }

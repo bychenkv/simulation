@@ -25,4 +25,10 @@ public class SimulationEventBus {
             listener.onStatusChanged(status);
         }
     }
+
+    public void notifyMapRendered(String renderedMap) {
+        for (SimulationEventListener listener : listeners) {
+            listener.onMapRendered(renderedMap);
+        }
+    }
 }

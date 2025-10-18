@@ -41,7 +41,7 @@ public class InputEventBus implements Closeable {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error listening input: " + e.getMessage());
         }
     }
 

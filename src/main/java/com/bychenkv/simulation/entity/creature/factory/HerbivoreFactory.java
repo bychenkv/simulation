@@ -3,10 +3,11 @@ package com.bychenkv.simulation.entity.creature.factory;
 import com.bychenkv.simulation.config.HerbivoreConfig;
 import com.bychenkv.simulation.entity.creature.Herbivore;
 import com.bychenkv.simulation.services.finder.ResourceFinder;
+import com.bychenkv.simulation.services.logger.SimulationLogger;
 
 public class HerbivoreFactory extends CreatureFactory<Herbivore, HerbivoreConfig> {
-    public HerbivoreFactory(HerbivoreConfig config, ResourceFinder resourceFinder) {
-        super(config, resourceFinder);
+    public HerbivoreFactory(HerbivoreConfig config, ResourceFinder resourceFinder, SimulationLogger logger) {
+        super(config, resourceFinder, logger);
     }
 
     @Override
@@ -15,7 +16,8 @@ public class HerbivoreFactory extends CreatureFactory<Herbivore, HerbivoreConfig
                 config.maxHp(),
                 config.speed(),
                 config.hpRestoreRate(),
-                resourceFinder
+                resourceFinder,
+                logger
         );
     }
 }
