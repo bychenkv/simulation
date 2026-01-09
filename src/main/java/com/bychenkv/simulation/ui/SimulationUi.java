@@ -1,6 +1,5 @@
 package com.bychenkv.simulation.ui;
 
-import com.bychenkv.simulation.config.MapSectionConfig;
 import com.bychenkv.simulation.core.simulation.SimulationEventBus;
 import com.bychenkv.simulation.core.simulation.SimulationStatus;
 import com.bychenkv.simulation.logger.LogMessage;
