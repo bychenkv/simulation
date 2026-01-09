@@ -1,64 +1,73 @@
 package com.bychenkv.simulation.ui;
 
-import com.bychenkv.simulation.core.SimulationEventListener;
-import com.bychenkv.simulation.core.SimulationStatus;
-import com.bychenkv.simulation.services.logger.LogMessage;
-import com.bychenkv.simulation.services.logger.SimulationLogger;
-import com.bychenkv.simulation.ui.section.*;
+import com.bychenkv.simulation.config.MapSectionConfig;
+import com.bychenkv.simulation.core.simulation.SimulationEventBus;
+import com.bychenkv.simulation.core.simulation.SimulationStatus;
+import com.bychenkv.simulation.logger.LogMessage;
+import com.bychenkv.simulation.logger.SimulationLogger;
+import com.bychenkv.simulation.ui.rendering.MapViewRenderer;
+import com.bychenkv.simulation.ui.rendering.MapViewport;
+import com.bychenkv.simulation.ui.display.Display;
+import com.bychenkv.simulation.ui.command.UiCommandEventBus;
+import com.bychenkv.simulation.ui.layout.UiLayout;
+import com.bychenkv.simulation.ui.layout.VerticalUiLayoutStrategy;
+import com.bychenkv.simulation.ui.sections.*;
 
 import java.io.Closeable;
 
-public class SimulationUi implements SimulationEventListener,
+public class SimulationUi implements SimulationEventBus.Listener,
                                      SimulationLogger.Listener,
                                      Closeable {
-    private final InputEventBus eventBus;
-    private final TerminalDisplay display;
+    private final UiCommandEventBus eventBus;
+    private final Display display;
     private final SimulationLogger logger;
     private final UiLayout layout;
-
-    // SECTIONS
 
     private final IterationSection iterationSection;
     private final MapSection mapSection;
     private final StatusSection statusSection;
     private final LogSection logSection;
 
-    public SimulationUi(TerminalDisplay display,
-                        InputEventBus eventBus,
-                        int mapHeight,
-                        SimulationLogger logger) {
+    public SimulationUi(Display display,
+                        UiCommandEventBus eventBus,
+                        SimulationLogger logger,
+                        MapViewport viewport,
+                        MapViewRenderer renderer) {
         this.display = display;
         this.eventBus = eventBus;
         this.logger = logger;
-        this.logger.addListener(this);
 
-        iterationSection = new IterationSection(display);
-        mapSection = new MapSection(display, mapHeight);
-        statusSection = new StatusSection(display);
-        logSection = new LogSection(display);
+        iterationSection = new IterationSection();
+        mapSection = new MapSection(viewport, renderer);
+        statusSection = new StatusSection();
+        logSection = new LogSection();
 
-        layout = new UiLayout(display);
-        layout.addSection(new HeaderSection(display));
+        layout = new UiLayout(display, new VerticalUiLayoutStrategy());
+        layout.addSection(new HeaderSection());
         layout.addSection(iterationSection);
         layout.addSection(mapSection);
         layout.addSection(statusSection);
         layout.addSection(logSection);
-        layout.addSection(new CommandSection(display));
+        layout.addSection(new CommandSection());
     }
 
     public void start() {
+        logger.addListener(this);
         eventBus.startListening();
         display.clear();
         display.hideCursor();
         layout.renderAllSections();
     }
 
+    public void scrollMap(int deltaX, int deltaY) {
+        mapSection.scrollBy(deltaX, deltaY);
+        layout.renderSection(mapSection);
+    }
+
     @Override
-    public void onIterationCompleted(int iteration, String renderedMap) {
+    public void onIterationCompleted(int iteration) {
         iterationSection.setCurrentIteration(iteration);
         layout.renderSection(iterationSection);
-
-        mapSection.setCurrentRenderedMap(renderedMap);
         layout.renderSection(mapSection);
     }
 
@@ -75,8 +84,7 @@ public class SimulationUi implements SimulationEventListener,
     }
 
     @Override
-    public void onMapRendered(String renderedMap) {
-        mapSection.setCurrentRenderedMap(renderedMap);
+    public void onMapRendered() {
         layout.renderSection(mapSection);
     }
 
@@ -84,16 +92,15 @@ public class SimulationUi implements SimulationEventListener,
     public void close() {
         eventBus.close();
         logger.removeListener(this);
-
         display.showCursor();
         display.clear();
     }
 
-    public void addEventListener(UiCommandListener listener) {
+    public void addEventListener(UiCommandEventBus.Listener listener) {
         eventBus.addListener(listener);
     }
 
-    public void removeEventListener(UiCommandListener listener) {
+    public void removeEventListener(UiCommandEventBus.Listener listener) {
         eventBus.removeListener(listener);
     }
 }
