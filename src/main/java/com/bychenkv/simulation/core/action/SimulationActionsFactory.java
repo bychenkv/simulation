@@ -3,6 +3,7 @@ package com.bychenkv.simulation.core.action;
 import com.bychenkv.simulation.config.CreaturesConfig;
 import com.bychenkv.simulation.config.EntitySpawnConfig;
 import com.bychenkv.simulation.config.SimulationConfig;
+import com.bychenkv.simulation.core.finder.BfsResourceFinder;
 import com.bychenkv.simulation.core.simulation.SimulationEventBus;
 import com.bychenkv.simulation.core.entity.Entity;
 import com.bychenkv.simulation.core.entity.creature.Herbivore;
@@ -12,7 +13,6 @@ import com.bychenkv.simulation.core.entity.creature.factory.PredatorFactory;
 import com.bychenkv.simulation.core.entity.object.Grass;
 import com.bychenkv.simulation.core.entity.object.Rock;
 import com.bychenkv.simulation.core.entity.object.Tree;
-import com.bychenkv.simulation.core.finder.ResourceFinder;
 import com.bychenkv.simulation.logger.SimulationLogger;
 
 import java.util.List;
@@ -22,12 +22,12 @@ public class SimulationActionsFactory {
     private final SimulationConfig simulationConfig;
     private final SimulationLogger logger;
     private final SimulationEventBus eventBus;
-    private final ResourceFinder resourceFinder;
+    private final BfsResourceFinder resourceFinder;
 
     public SimulationActionsFactory(SimulationConfig simulationConfig,
                                     SimulationLogger logger,
                                     SimulationEventBus eventBus,
-                                    ResourceFinder resourceFinder) {
+                                    BfsResourceFinder resourceFinder) {
         this.simulationConfig = simulationConfig;
         this.logger = logger;
         this.eventBus = eventBus;

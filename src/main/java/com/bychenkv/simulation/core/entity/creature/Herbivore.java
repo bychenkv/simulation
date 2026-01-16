@@ -1,17 +1,17 @@
 package com.bychenkv.simulation.core.entity.creature;
 
+import com.bychenkv.simulation.core.finder.BfsResourceFinder;
 import com.bychenkv.simulation.core.map.Position;
 import com.bychenkv.simulation.core.map.SimulationMap;
 import com.bychenkv.simulation.core.entity.Entity;
 import com.bychenkv.simulation.core.entity.object.Grass;
-import com.bychenkv.simulation.core.finder.ResourceFinder;
 import com.bychenkv.simulation.logger.SimulationLogger;
 
 public class Herbivore extends Creature {
     public Herbivore(int maxHp,
                      int speed,
                      int hpRestoreRate,
-                     ResourceFinder resourceFinder,
+                     BfsResourceFinder resourceFinder,
                      SimulationLogger logger) {
         super(maxHp, speed, resourceFinder, logger);
         this.hpRestoreRate = hpRestoreRate;

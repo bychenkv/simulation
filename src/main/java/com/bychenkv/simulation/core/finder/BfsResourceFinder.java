@@ -7,7 +7,7 @@ import com.bychenkv.simulation.core.entity.Entity;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class BfsResourceFinder implements ResourceFinder {
+public class BfsResourceFinder {
     private final SimulationMap map;
 
     public BfsResourceFinder(SimulationMap map) {

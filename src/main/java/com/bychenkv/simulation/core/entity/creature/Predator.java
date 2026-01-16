@@ -1,9 +1,9 @@
 package com.bychenkv.simulation.core.entity.creature;
 
+import com.bychenkv.simulation.core.finder.BfsResourceFinder;
 import com.bychenkv.simulation.core.map.Position;
 import com.bychenkv.simulation.core.map.SimulationMap;
 import com.bychenkv.simulation.core.entity.Entity;
-import com.bychenkv.simulation.core.finder.ResourceFinder;
 import com.bychenkv.simulation.logger.SimulationLogger;
 
 public class Predator extends Creature {
@@ -12,10 +12,9 @@ public class Predator extends Creature {
     public Predator(int maxHp,
                     int speed,
                     int attack,
-                    ResourceFinder resourceFinder,
+                    BfsResourceFinder resourceFinder,
                     SimulationLogger logger) {
         super(maxHp, speed, resourceFinder, logger);
-
         this.attack = attack;
         this.hpRestoreRate = attack;
     }

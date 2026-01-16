@@ -8,7 +8,6 @@ import com.bychenkv.simulation.core.simulation.SimulationEngine;
 import com.bychenkv.simulation.core.simulation.SimulationEventBus;
 import com.bychenkv.simulation.core.simulation.SimulationState;
 import com.bychenkv.simulation.core.finder.BfsResourceFinder;
-import com.bychenkv.simulation.core.finder.ResourceFinder;
 import com.bychenkv.simulation.logger.SimulationLogger;
 import com.bychenkv.simulation.ui.rendering.ConsoleEntityRenderer;
 import com.bychenkv.simulation.ui.rendering.EntityRenderer;
@@ -60,7 +59,7 @@ public class SimulationLauncherFactory {
         SimulationState state = new SimulationState();
         SimulationMap map = new SimulationMap(mapSectionConfig.mapBounds());
 
-        ResourceFinder resourceFinder = new BfsResourceFinder(map);
+        BfsResourceFinder resourceFinder = new BfsResourceFinder(map);
         SimulationActionsFactory actionsFactory = new SimulationActionsFactory(
                 simulationConfig,
                 logger,
